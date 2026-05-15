@@ -1,0 +1,26 @@
+name: Build and Push Docker Images
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build API image
+        run: |
+          docker build -t ghcr.io/tgalton/beibeilles-api:latest ./api
+          docker push ghcr.io/tgalton/beibeilles-api:latest
+
+      - name: Build Dash image
+        run: |
+          docker build -t ghcr.io/tgalton/beibeilles-dash:latest ./dash_app
+          docker push ghcr.io/tgalton/beibeilles-dash:latest
