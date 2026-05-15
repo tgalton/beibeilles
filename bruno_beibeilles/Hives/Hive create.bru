@@ -1,0 +1,22 @@
+meta {
+  name: Hive create
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://127.0.0.1:8000/hives
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "Ruche Alpha"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

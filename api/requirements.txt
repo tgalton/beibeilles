@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+sqlalchemy
+pydantic
+requests
+tenacity
+# SQLAlchemy a besoin d’un driver PostgreSQL.
+psycopg[binary]

@@ -1,0 +1,23 @@
+meta {
+  name: Weighing Create
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://127.0.0.1:8000/weighings
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "weight": 42.31,
+    "level_id": 1
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,131 @@
+Structure du dossier
+Le num‚ro de s‚rie du volume est D838-AEFC
+C:.
+|   arborescence.txt
+|   docker-compose.yml
+|   readme_rucher_connecte.md
+|   
++---api
+|   |   beehive.db
+|   |   Dockerfile
+|   |   requirements.txt
+|   |   SQLite Beibeille .session.sql
+|   |   
+|   +---.vscode
+|   |       settings.json
+|   |       
+|   +---app
+|   |   |   database.py
+|   |   |   main.py
+|   |   |   
+|   |   +---models
+|   |   |   |   hive.py
+|   |   |   |   hive_level.py
+|   |   |   |   tare.py
+|   |   |   |   weighing.py
+|   |   |   |   
+|   |   |   \---__pycache__
+|   |   |           hive.cpython-312.pyc
+|   |   |           hive_level.cpython-312.pyc
+|   |   |           tare.cpython-312.pyc
+|   |   |           weighing.cpython-312.pyc
+|   |   |           
+|   |   +---repositories
+|   |   |   |   hive_level_repository.py
+|   |   |   |   hive_repository.py
+|   |   |   |   weighing_repository.py
+|   |   |   |   
+|   |   |   \---__pycache__
+|   |   |           hive_level_repository.cpython-312.pyc
+|   |   |           hive_repository.cpython-312.pyc
+|   |   |           weighing_repository.cpython-312.pyc
+|   |   |           
+|   |   +---routers
+|   |   |   |   hive.py
+|   |   |   |   hive_level.py
+|   |   |   |   weighing.py
+|   |   |   |   
+|   |   |   \---__pycache__
+|   |   |           hive.cpython-312.pyc
+|   |   |           hive_level.cpython-312.pyc
+|   |   |           weighing.cpython-312.pyc
+|   |   |           
+|   |   +---schemas
+|   |   |   |   hive.py
+|   |   |   |   hive_level.py
+|   |   |   |   weighing.py
+|   |   |   |   
+|   |   |   \---__pycache__
+|   |   |           hive.cpython-312.pyc
+|   |   |           hive_level.cpython-312.pyc
+|   |   |           weighing.cpython-312.pyc
+|   |   |           
+|   |   +---services
+|   |   |   |   hive_level_service.py
+|   |   |   |   hive_service.py
+|   |   |   |   weighing_service.py
+|   |   |   |   
+|   |   |   \---__pycache__
+|   |   |           hive_level_service.cpython-312.pyc
+|   |   |           hive_service.cpython-312.pyc
+|   |   |           weighing_service.cpython-312.pyc
+|   |   |           
+|   |   \---__pycache__
+|   |           database.cpython-312.pyc
+|   |           main.cpython-312.pyc
+|   |           
+|   +---scripts
+|   |       generate_fake_data.py
+|   |       
+|   \---__pycache__
+|           main.cpython-312.pyc
+|           
++---bruno_beibeilles
+|   |   bruno.json
+|   |   
+|   +---Hives
+|   |       folder.bru
+|   |       Hive create.bru
+|   |       Hive DeleteById.bru
+|   |       Hive GetAll.bru
+|   |       Hive GetById.bru
+|   |       Hive update.bru
+|   |       
+|   +---Hive_Levels
+|   |       folder.bru
+|   |       HiveLevel Create.bru
+|   |       HiveLevel GetAll.bru
+|   |       HiveLevel GetById.bru
+|   |       
+|   +---Tares
+|   |       folder.bru
+|   |       
+|   \---Weighings
+|           folder.bru
+|           Weighing Create.bru
+|           Weighing GetAll.bru
+|           Weighing GetById.bru
+|           
+\---dash_app
+    |   app.py
+    |   Dockerfile
+    |   requirements.txt
+    |   
+    +---api
+    |   |   client.py
+    |   |   
+    |   \---__pycache__
+    |           client.cpython-312.pyc
+    |           
+    +---components
+    |   |   graph.py
+    |   |   
+    |   \---__pycache__
+    |           graph.cpython-312.pyc
+    |           
+    \---pages
+        |   dashboard.py
+        |   
+        \---__pycache__
+                dashboard.cpython-312.pyc
+                

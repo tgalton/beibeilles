@@ -1,0 +1,23 @@
+meta {
+  name: Weighing GetAll
+  type: http
+  seq: 3
+}
+
+get {
+  url: http://127.0.0.1:8000/weighings
+  body: none
+  auth: inherit
+}
+
+body:json {
+  {
+    "weight": 42.31,
+    "level_id": 1
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
