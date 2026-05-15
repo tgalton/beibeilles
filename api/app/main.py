@@ -37,6 +37,7 @@ def startup():
 @app.get("/")
 def root() -> dict[str, str]:
 
+
     return {
         "message": "Beehive API running",
     }
