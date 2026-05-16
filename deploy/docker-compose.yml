@@ -30,7 +30,7 @@ services:
       - "8050:8050"
 
   watchtower:
-    image: containrrr/watchtower
+    image: containrrr/watchtower:1.5.3
     container_name: watchtower
     restart: always
     volumes:
