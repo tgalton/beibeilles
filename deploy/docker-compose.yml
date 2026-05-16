@@ -1,0 +1,41 @@
+services:
+  timescaledb:
+    image: timescale/timescaledb:latest-pg16
+    restart: always
+    environment:
+      POSTGRES_USER: beibeilles
+      POSTGRES_PASSWORD: beibeilles
+      POSTGRES_DB: beibeilles
+    volumes:
+      - timescaledb_data:/var/lib/postgresql/data
+
+  api:
+    image: ghcr.io/tgalton/beibeilles-api:latest
+    container_name: beibeilles-api
+    restart: always
+    pull_policy: always
+    environment:
+      DATABASE_URL: postgresql+psycopg://beibeilles:beibeilles@timescaledb:5432/beibeilles
+    ports:
+      - "8000:8000"
+    depends_on:
+      - timescaledb
+
+  dash:
+    image: ghcr.io/tgalton/beibeilles-dash:latest
+    container_name: beibeilles-dash
+    restart: always
+    pull_policy: always
+    ports:
+      - "8050:8050"
+
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 30
+
+volumes:
+  timescaledb_data:
