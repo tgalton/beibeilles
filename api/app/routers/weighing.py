@@ -19,20 +19,6 @@ router = APIRouter(
 )
 
 
-@router.post(
-    "",
-    response_model=WeighingRead,
-)
-def create_weighing(
-    weighing: WeighingCreate,
-    db: Session = Depends(get_db),
-):
-    return weighing_service.create_weighing(
-        db=db,
-        weighing=weighing,
-    )
-
-
 @router.get(
     "/{weighing_id}",
     response_model=WeighingRead,

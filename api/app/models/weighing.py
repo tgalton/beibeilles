@@ -40,3 +40,12 @@ class Weighing(Base):
         "HiveLevel",
         back_populates="weighings",
     )
+    
+    sensor_device_id: Mapped[int] = mapped_column(
+        ForeignKey("sensor_devices.id"),
+        nullable=False,
+    )
+
+    sensor_device = relationship(
+        "SensorDevice",
+    )

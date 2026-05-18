@@ -6,6 +6,12 @@ from app.database import engine
 from app.routers.hive import router as hive_router
 from app.routers.hive_level import router as hive_level_router
 from app.routers.weighing import router as weighing_router
+from app.routers.iot import router as iot_router
+from app.routers.sensor_device import (
+    router as sensor_device_router,
+)
+
+
 
 app = FastAPI()
 
@@ -14,10 +20,12 @@ app = FastAPI()
 # Routers API
 # =========================================================
 
+
 app.include_router(hive_router)
+app.include_router(iot_router)
 app.include_router(hive_level_router)
 app.include_router(weighing_router)
-
+app.include_router(sensor_device_router)
 
 # =========================================================
 # Startup application
