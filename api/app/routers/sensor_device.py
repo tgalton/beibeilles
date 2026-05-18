@@ -26,10 +26,9 @@ router = APIRouter(
     response_model=SensorDeviceRead,
 )
 def create_sensor_device(
-    db: Session,
     sensor_device: SensorDeviceCreate,
+    db: Session = Depends(get_db),
 ):
-
     db_sensor_device = SensorDevice(
         name=sensor_device.name,
         serial_number=sensor_device.serial_number,
