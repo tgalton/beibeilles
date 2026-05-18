@@ -5,8 +5,8 @@ from fastapi import HTTPException
 from fastapi import APIRouter
 from fastapi import Depends
 
-from api.app.models.sensor_device import SensorDevice
-from api.app.repositories import sensor_device_repository
+from app.models.sensor_device import SensorDevice
+from app.repositories import sensor_device_repository
 from app.database import get_db
 
 from app.schemas.sensor_device import SensorDeviceCreate
