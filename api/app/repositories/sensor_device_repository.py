@@ -29,3 +29,8 @@ def get_by_serial(
         )
         .first()
     )
+    
+def get_all(
+    db: Session,
+) -> list[SensorDevice]:
+    return db.query(SensorDevice).all()

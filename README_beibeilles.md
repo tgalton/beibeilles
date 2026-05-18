@@ -1,3 +1,11 @@
+<!-- Lancement -> docker compose up --build -->
+<!-- Fermeture des contener -> docker compose down -v  -->
+<!-- Nettoyage de tout les docker -> docker system prune -a --volumes -f -->
+<!-- Suppresion manuelle contener de la base : docker volume rm beibeilles_timescaledb_data -->
+<!-- Création d'arbre : find . -print | sed -e 's;[^/]*/;|   ;g' -->
+<!-- Création de fichier d'arborescence : cmd //c "tree /F /A > arborescence.txt" -->
+<!-- Mdp temporaire bdd : 4b90cedb66834ff8ab4a1d38ff0d5d15 -->
+
 # Plateforme de supervision apicole connectée
 
 ## Objectif du projet

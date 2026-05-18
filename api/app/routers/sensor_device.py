@@ -16,7 +16,7 @@ router = APIRouter(
     tags=["SensorDevices"],
 )
 
-
+# Create
 @router.post(
     "",
     response_model=SensorDeviceRead,
@@ -28,4 +28,27 @@ def create_sensor_device(
     return sensor_device_service.create_sensor_device(
         db=db,
         sensor_device=sensor_device,
+    )
+    
+# GetAllSensors
+@router.get(
+    "",
+    response_model=list[SensorDeviceRead],
+)
+def get_all_sensor(
+    db: Session = Depends(get_db),
+):
+    return sensor_device_service.get_sensor_all_device(db=db)
+
+# GetBySerial
+@router.get(
+    "/{serial_number}",
+    response_model= SensorDeviceRead)
+def get_sensor(
+    serial_number: str,
+    db : Session = Depends(get_db),
+):
+    return sensor_device_service.get_sensor(
+        db = db,
+        serial_number = serial_number,
     )
