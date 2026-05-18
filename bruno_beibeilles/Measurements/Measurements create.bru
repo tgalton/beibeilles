@@ -5,14 +5,14 @@ meta {
 }
 
 post {
-  url: {{host}}/measurements
+  url: {{host}}/iot/ingest
   body: json
   auth: inherit
 }
 
 body:json {
   {
-    "device_uid": "esp32_ruche_1",
+    "device_uid": "test",
     "measurements": [
       {
         "type": "weight",
