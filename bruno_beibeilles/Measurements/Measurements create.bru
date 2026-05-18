@@ -1,0 +1,42 @@
+meta {
+  name: Measurements create
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{host}}/measurements
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "device_uid": "esp32_ruche_1",
+    "measurements": [
+      {
+        "type": "weight",
+        "value": 42.31,
+        "hive_level": 1
+      },
+      {
+        "type": "weight",
+        "value": 38.12,
+        "hive_level": 2
+      },
+      {
+        "type": "temperature",
+        "value": 35.4
+      },
+      {
+        "type": "humidity",
+        "value": 62.1
+      }
+    ]
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

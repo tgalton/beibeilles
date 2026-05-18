@@ -1,19 +1,20 @@
 meta {
-  name: Weighing Create
+  name: Sensor Device create
   type: http
   seq: 1
 }
 
 post {
-  url: http://127.0.0.1:8000/weighings
+  url: {{host}}/sensor-devices
   body: json
   auth: inherit
 }
 
 body:json {
   {
-    "weight": 42.31,
-    "level_id": 1
+    "name": "esp32_ruche_1",
+    "hive_id": 2,
+    "serial_number": "test2"
   }
 }
 
