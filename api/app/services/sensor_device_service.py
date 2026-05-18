@@ -2,26 +2,33 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
+from api.app.schemas.sensor_device import SensorDeviceCreate
 from app.models.sensor_device import SensorDevice
 
 from app.repositories import sensor_device_repository
 
-from app.schemas.sensor_device import SensorDeviceCreate
 
 # Create Device
-def create(
+def create_sensor_device(
     db: Session,
-    sensor_device: SensorDevice,
+    sensor_device: SensorDeviceCreate,
 ) -> SensorDevice:
 
+    db_sensor_device = SensorDevice(
+        name=sensor_device.name,
+        serial_number=sensor_device.serial_number,
+        hive_id=sensor_device.hive_id,
+    )
+
     try:
-        db.add(sensor_device)
+
+        db.add(db_sensor_device)
 
         db.commit()
 
-        db.refresh(sensor_device)
+        db.refresh(db_sensor_device)
 
-        return sensor_device
+        return db_sensor_device
 
     except IntegrityError:
 

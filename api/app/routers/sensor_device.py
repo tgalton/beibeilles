@@ -51,7 +51,7 @@ def get_sensor(
     serial_number: str,
     db: Session = Depends(get_db),
 ):
-    return sensor_device_service.get_sensor(
+    return sensor_device_service.get_sensor_by_serial(
         db=db,
         serial_number=serial_number,
     )

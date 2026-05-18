@@ -17,6 +17,32 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install API dependencies
+        run: |
+          cd api
+          pip install -r requirements.txt
+          pip install ruff mypy
+
+      - name: Ruff check
+        run: |
+          cd api
+          ruff check .
+
+      - name: MyPy check
+        run: |
+          cd api
+          mypy app
+
+      - name: Validate FastAPI startup
+        run: |
+          cd api
+          python -c "from app.main import app"
+
       - name: Login to GHCR
         run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u tgalton --password-stdin
 
