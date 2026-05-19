@@ -1,7 +1,7 @@
 from dash import html, dcc
 from dash.dependencies import Input, Output
 
-from app.client import get_hives, get_weighings
+from api.client import get_hives, get_weighings
 from components.graph import build_weight_graph
 
 

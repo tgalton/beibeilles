@@ -1,10 +1,18 @@
 Structure du dossier
 Le num‚ro de s‚rie du volume est D838-AEFC
 C:.
+|   .gitignore
 |   arborescence.txt
 |   docker-compose.yml
-|   readme_rucher_connecte.md
+|   README_beibeilles.md
 |   
++---.github
+|   \---workflows
+|           docker.yml
+|           
++---.vscode
+|       settings.json
+|       
 +---api
 |   |   beehive.db
 |   |   Dockerfile
@@ -21,19 +29,22 @@ C:.
 |   |   +---models
 |   |   |   |   hive.py
 |   |   |   |   hive_level.py
-|   |   |   |   tare.py
-|   |   |   |   weighing.py
+|   |   |   |   measurement.py
+|   |   |   |   sensor_device.py
+|   |   |   |   __init__.py
 |   |   |   |   
 |   |   |   \---__pycache__
 |   |   |           hive.cpython-312.pyc
 |   |   |           hive_level.cpython-312.pyc
 |   |   |           tare.cpython-312.pyc
 |   |   |           weighing.cpython-312.pyc
+|   |   |           __init__.cpython-312.pyc
 |   |   |           
 |   |   +---repositories
 |   |   |   |   hive_level_repository.py
 |   |   |   |   hive_repository.py
-|   |   |   |   weighing_repository.py
+|   |   |   |   measurement_repository.py
+|   |   |   |   sensor_device_repository.py
 |   |   |   |   
 |   |   |   \---__pycache__
 |   |   |           hive_level_repository.cpython-312.pyc
@@ -43,7 +54,8 @@ C:.
 |   |   +---routers
 |   |   |   |   hive.py
 |   |   |   |   hive_level.py
-|   |   |   |   weighing.py
+|   |   |   |   measurement.py
+|   |   |   |   sensor_device.py
 |   |   |   |   
 |   |   |   \---__pycache__
 |   |   |           hive.cpython-312.pyc
@@ -53,7 +65,8 @@ C:.
 |   |   +---schemas
 |   |   |   |   hive.py
 |   |   |   |   hive_level.py
-|   |   |   |   weighing.py
+|   |   |   |   measurement.py
+|   |   |   |   sensor_device.py
 |   |   |   |   
 |   |   |   \---__pycache__
 |   |   |           hive.cpython-312.pyc
@@ -63,7 +76,8 @@ C:.
 |   |   +---services
 |   |   |   |   hive_level_service.py
 |   |   |   |   hive_service.py
-|   |   |   |   weighing_service.py
+|   |   |   |   measurement_service.py
+|   |   |   |   sensor_device_service.py
 |   |   |   |   
 |   |   |   \---__pycache__
 |   |   |           hive_level_service.cpython-312.pyc
@@ -83,6 +97,10 @@ C:.
 +---bruno_beibeilles
 |   |   bruno.json
 |   |   
+|   +---environments
+|   |       localhost beibeilles.bru
+|   |       only beibeilles.bru
+|   |       
 |   +---Hives
 |   |       folder.bru
 |   |       Hive create.bru
@@ -97,35 +115,51 @@ C:.
 |   |       HiveLevel GetAll.bru
 |   |       HiveLevel GetById.bru
 |   |       
+|   +---Measurements
+|   |       folder.bru
+|   |       Measurements create.bru
+|   |       
+|   +---Sensor Devices
+|   |       folder.bru
+|   |       Sensor Device create.bru
+|   |       Sensor Device getAll.bru
+|   |       Sensor Device getBySerial.bru
+|   |       
 |   +---Tares
 |   |       folder.bru
 |   |       
 |   \---Weighings
 |           folder.bru
-|           Weighing Create.bru
 |           Weighing GetAll.bru
 |           Weighing GetById.bru
 |           
-\---dash_app
-    |   app.py
-    |   Dockerfile
-    |   requirements.txt
-    |   
-    +---api
-    |   |   client.py
-    |   |   
-    |   \---__pycache__
-    |           client.cpython-312.pyc
-    |           
-    +---components
-    |   |   graph.py
-    |   |   
-    |   \---__pycache__
-    |           graph.cpython-312.pyc
-    |           
-    \---pages
-        |   dashboard.py
-        |   
-        \---__pycache__
-                dashboard.cpython-312.pyc
-                
++---dash_app
+|   |   app.py
+|   |   Dockerfile
+|   |   requirements.txt
+|   |   
+|   +---api
+|   |   |   client.py
+|   |   |   
+|   |   \---__pycache__
+|   |           client.cpython-312.pyc
+|   |           
+|   +---components
+|   |   |   graph.py
+|   |   |   
+|   |   \---__pycache__
+|   |           graph.cpython-312.pyc
+|   |           
+|   \---pages
+|       |   dashboard.py
+|       |   
+|       \---__pycache__
+|               dashboard.cpython-312.pyc
+|               
++---deploy
+|       docker-compose.yml
+|       
+\---rasberry_script_beibeilles
+        collector.py
+        rasberry_ingest.py
+        

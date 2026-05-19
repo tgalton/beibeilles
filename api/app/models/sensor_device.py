@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import UTC, datetime
 
 from sqlalchemy import DateTime
 from sqlalchemy import ForeignKey
@@ -40,7 +40,7 @@ class SensorDevice(Base):
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
-        default=datetime.utcnow,
+        default=(datetime.now(UTC)),
         nullable=False,
     )
 
@@ -48,21 +48,8 @@ class SensorDevice(Base):
         "Hive",
         back_populates="sensor_devices",
     )
-
-    temperature_measurements = relationship(
-        "TemperatureMeasurement",
+    
+    measurements = relationship(
+        "Measurement",
         back_populates="sensor_device",
-        cascade="all, delete-orphan",
-    )
-
-    humidity_measurements = relationship(
-        "HumidityMeasurement",
-        back_populates="sensor_device",
-        cascade="all, delete-orphan",
-    )
-
-    co2_measurements = relationship(
-        "CO2Measurement",
-        back_populates="sensor_device",
-        cascade="all, delete-orphan",
     )

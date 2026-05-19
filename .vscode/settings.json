@@ -1,4 +1,11 @@
 {
   "python.analysis.typeCheckingMode": "strict",
-  "python-envs.defaultEnvManager": "ms-python.python:system"
+  "python-envs.defaultEnvManager": "ms-python.python:system",
+  "ruff.enable": true,
+
+  "ruff.lint.run": "onSave",
+
+  "editor.codeActionsOnSave": {
+    "source.fixAll.ruff": "explicit"
+  }
 }
