@@ -2,7 +2,7 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
-from api.app.schemas.sensor_device import SensorDeviceCreate
+from app.schemas.sensor_device import SensorDeviceCreate
 from app.models.sensor_device import SensorDevice
 
 from app.repositories import sensor_device_repository
