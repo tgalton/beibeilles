@@ -4,6 +4,7 @@ sqlalchemy
 pydantic
 requests
 tenacity
+python-dotenv
 # SQLAlchemy a besoin d’un driver PostgreSQL.
 psycopg[binary]
 # Pour voir les bug 
