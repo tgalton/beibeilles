@@ -7,6 +7,8 @@
 <!-- Mdp temporaire bdd : 4b90cedb66834ff8ab4a1d38ff0d5d15 -->
 <!-- Lancer uvicorn app.main:app --reload pour tester le back avant de pousser -->
 
+docker logs watchtower -f
+
 # Plateforme de supervision apicole connectée
 
 ## Objectif du projet

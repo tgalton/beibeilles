@@ -1,14 +1,19 @@
 from fastapi import HTTPException
-from sqlalchemy.orm import Session
-from sqlalchemy.exc import IntegrityError
 
-from app.schemas.sensor_device import SensorDeviceCreate
+from sqlalchemy.orm import Session
+
 from app.models.sensor_device import SensorDevice
 
 from app.repositories import sensor_device_repository
 
+from app.schemas.sensor_device import (
+    SensorDeviceCreate,
+)
 
-# Create Device
+
+# =========================================================
+# Création d'un device
+# =========================================================
 def create_sensor_device(
     db: Session,
     sensor_device: SensorDeviceCreate,
@@ -17,36 +22,34 @@ def create_sensor_device(
     db_sensor_device = SensorDevice(
         name=sensor_device.name,
         serial_number=sensor_device.serial_number,
-        hive_id=sensor_device.hive_id,
     )
 
-    try:
+    return sensor_device_repository.create(
+        db=db,
+        sensor_device=db_sensor_device,
+    )
 
-        db.add(db_sensor_device)
 
-        db.commit()
-
-        db.refresh(db_sensor_device)
-
-        return db_sensor_device
-
-    except IntegrityError:
-
-        db.rollback()
-
-        raise
-    
-# GetAll 
+# =========================================================
+# Récupération de tous les devices
+# =========================================================
 def get_sensor_all_device(
     db: Session,
-):
-    return sensor_device_repository.get_all(db=db)
+) -> list[SensorDevice]:
+
+    return sensor_device_repository.get_all(
+        db=db,
+    )
 
 
+# =========================================================
+# Recherche par serial
+# =========================================================
 def get_sensor_by_serial(
     db: Session,
     serial_number: str,
-):
+) -> SensorDevice:
+
     sensor = sensor_device_repository.get_by_serial(
         db=db,
         serial_number=serial_number,

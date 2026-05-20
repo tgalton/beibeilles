@@ -1,7 +1,8 @@
-from datetime import UTC, datetime
+from datetime import UTC
+from datetime import datetime
 
+from sqlalchemy import Boolean
 from sqlalchemy import DateTime
-from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
 from sqlalchemy import String
 
@@ -21,34 +22,52 @@ class SensorDevice(Base):
         index=True,
     )
 
+    # =====================================================
+    # Nom humain modifiable
+    # =====================================================
     name: Mapped[str] = mapped_column(
-        String(255),
+        String,
         nullable=False,
-        unique=True,
     )
 
+    # =====================================================
+    # Identifiant matériel unique
+    #
+    # Exemple :
+    # A0B7651F92CC
+    # =====================================================
     serial_number: Mapped[str] = mapped_column(
-        String(255),
-        nullable=False,
+        String,
         unique=True,
+        nullable=False,
+        index=True,
     )
 
-    hive_id: Mapped[int] = mapped_column(
-        ForeignKey("hives.id"),
+    # =====================================================
+    # Device auto enregistré ou validé
+    # par un utilisateur/admin
+    # =====================================================
+    is_registered: Mapped[bool] = mapped_column(
+        Boolean,
+        default=False,
+        nullable=False,
+    )
+
+    # =====================================================
+    # Dernière communication connue
+    # =====================================================
+    last_seen_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=lambda: datetime.now(UTC),
         nullable=False,
     )
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
-        default=(datetime.now(UTC)),
+        default=lambda: datetime.now(UTC),
         nullable=False,
     )
 
-    hive = relationship(
-        "Hive",
-        back_populates="sensor_devices",
-    )
-    
     measurements = relationship(
         "Measurement",
         back_populates="sensor_device",

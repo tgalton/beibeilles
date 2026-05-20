@@ -5,6 +5,8 @@ from fastapi import Depends
 
 from app.database import get_db
 
+from app.models.sensor_device import SensorDevice
+
 from app.schemas.sensor_device import SensorDeviceCreate
 from app.schemas.sensor_device import SensorDeviceRead
 
@@ -24,7 +26,8 @@ router = APIRouter(
 def create_sensor_device(
     sensor_device: SensorDeviceCreate,
     db: Session = Depends(get_db),
-):
+) -> SensorDevice:
+
     return sensor_device_service.create_sensor_device(
         db=db,
         sensor_device=sensor_device,
@@ -37,7 +40,8 @@ def create_sensor_device(
 )
 def get_all_sensor(
     db: Session = Depends(get_db),
-):
+) -> list[SensorDevice]:
+
     return sensor_device_service.get_sensor_all_device(
         db=db,
     )
@@ -50,7 +54,8 @@ def get_all_sensor(
 def get_sensor(
     serial_number: str,
     db: Session = Depends(get_db),
-):
+) -> SensorDevice:
+
     return sensor_device_service.get_sensor_by_serial(
         db=db,
         serial_number=serial_number,
