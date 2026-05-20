@@ -1,29 +1,29 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
-from app.database import Base, engine
+from app.database import Base
+from app.database import engine
 
 from app.routers.hive import router as hive_router
 from app.routers.hive_level import router as hive_level_router
 from app.routers.sensor_device import (
     router as sensor_device_router,
 )
-
+from app.routers.measurement import (
+    router as measurement_router,
+)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
 
-    # =========================================================
-    # Startup application
-    # =========================================================
+    print("MAIN.PY LOADED")
+
+    # =====================================================
+    # Création automatique des tables SQLAlchemy
+    # =====================================================
     Base.metadata.create_all(bind=engine)
 
     yield
-
-    # =========================================================
-    # Shutdown application
-    # =========================================================
-    # Rien pour le moment
 
 
 app = FastAPI(lifespan=lifespan)
@@ -32,10 +32,10 @@ app = FastAPI(lifespan=lifespan)
 # =========================================================
 # Routers API
 # =========================================================
-
 app.include_router(hive_router)
 app.include_router(hive_level_router)
 app.include_router(sensor_device_router)
+app.include_router(measurement_router)
 
 
 # =========================================================

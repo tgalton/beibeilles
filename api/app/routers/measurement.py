@@ -12,6 +12,9 @@ from app.schemas.measurement import (
 )
 
 from app.services import measurement_service
+from app.schemas.iot_ingest import IoTIngest
+from app.services import measurement_service
+
 
 
 router = APIRouter(
@@ -57,4 +60,19 @@ def get_measurements(
         start_at=start_at,
         end_at=end_at,
         limit=limit,
+    )
+    
+
+@router.post(
+    "/ingest",
+    response_model=list[MeasurementRead],
+)
+def ingest_measurements(
+    payload: IoTIngest,
+    db: Session = Depends(get_db),
+):
+
+    return measurement_service.ingest_measurements(
+        db=db,
+        payload=payload,
     )

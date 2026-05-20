@@ -1,7 +1,7 @@
 from datetime import UTC
 from datetime import datetime
 
-from sqlalchemy import Boolean
+from sqlalchemy import Boolean, ForeignKey
 from sqlalchemy import DateTime
 from sqlalchemy import Integer
 from sqlalchemy import String
@@ -61,11 +61,26 @@ class SensorDevice(Base):
         default=lambda: datetime.now(UTC),
         nullable=False,
     )
+    
+    # =====================================================
+    # FK vers Hive
+    # =====================================================
+    hive_id: Mapped[int] = mapped_column(
+        ForeignKey("hives.id"),
+        nullable=True,
+    )
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
         default=lambda: datetime.now(UTC),
         nullable=False,
+    )
+    # =====================================================
+    # Relation SQLAlchemy
+    # =====================================================
+    hive = relationship(
+        "Hive",
+        back_populates="sensor_devices",
     )
 
     measurements = relationship(

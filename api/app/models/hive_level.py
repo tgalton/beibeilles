@@ -55,15 +55,3 @@ class HiveLevel(Base):
         foreign_keys=[upper_level_id],
         post_update=True,
     )
-
-    weighings = relationship(
-        "Weighing",
-        back_populates="level",
-        cascade="all, delete-orphan",
-    )
-
-    tares = relationship(
-        "Tare",
-        back_populates="level",
-        cascade="all, delete-orphan",
-    )

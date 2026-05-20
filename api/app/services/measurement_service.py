@@ -4,6 +4,9 @@ from fastapi import HTTPException
 
 from sqlalchemy.orm import Session
 
+from app.models.sensor_device import SensorDevice
+from app.repositories import sensor_device_repository
+from app.schemas.iot_ingest import IoTIngest
 from app.models.measurement import Measurement
 
 from app.repositories import measurement_repository
@@ -70,3 +73,42 @@ def get_measurement_by_id(
         )
 
     return measurement
+
+def ingest_measurements(
+    db: Session,
+    payload: IoTIngest,
+) -> list[Measurement]:
+
+    # =====================================================
+    # 1. récupérer ou créer le device
+    # =====================================================
+    sensor_device: SensorDevice = (
+        sensor_device_repository.get_or_create_by_serial(
+            db=db,
+            serial_number=payload.device_serial,
+        )
+    )
+
+    created_measurements: list[Measurement] = []
+
+    # =====================================================
+    # 2. transformer payload -> ORM
+    # =====================================================
+    for m in payload.measurements:
+
+        db_measurement = Measurement(
+            type=m.type,
+            value=m.value,
+            hive_level_id=m.hive_level_id,
+            sensor_device_id=sensor_device.id,
+        )
+
+        created_measurements.append(db_measurement)
+
+    # =====================================================
+    # 3. bulk insert
+    # =====================================================
+    return measurement_repository.create_many(
+        db=db,
+        measurements=created_measurements,
+    )

@@ -7,6 +7,9 @@
 <!-- Mdp temporaire bdd : 4b90cedb66834ff8ab4a1d38ff0d5d15 -->
 <!-- Lancer uvicorn app.main:app --reload pour tester le back avant de pousser -->
 
+http://79.137.34.118:8000/openapi.json <!--donne le json de l'api -->
+rm beehive.db <!-- Supprime sqlite locale -->
+
 docker logs watchtower -f
 
 # Plateforme de supervision apicole connectée

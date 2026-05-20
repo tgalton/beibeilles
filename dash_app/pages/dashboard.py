@@ -1,9 +1,8 @@
 from dash import html, dcc
 from dash.dependencies import Input, Output
 
-from api.client import get_hives, get_weighings
-from components.graph import build_weight_graph
-
+from api.client import get_hives, get_measurements
+from components.graph import build_measurements_graph
 
 def layout():
     """
@@ -23,9 +22,15 @@ def layout():
             # Dropdown ruche (chargé dynamiquement)
             # -----------------------------
             dcc.Dropdown(
-                id="hive-selector",
-                placeholder="Choisir une ruche...",
-            ),
+                id="type-selector",
+                options=[
+                    {"label": "Weight", "value": "weight"},
+                    {"label": "Temperature", "value": "temperature"},
+                    {"label": "Humidity", "value": "humidity"},
+                    {"label": "CO2", "value": "co2"},
+                ],
+                value="weight",
+            )
 
             # -----------------------------
             # Graph poids
@@ -77,22 +82,10 @@ def register_callbacks(app):
         Output("weight-graph", "figure"),
         Input("hive-selector", "value"),
     )
-    def update_graph(hive_id):
-        """
-        À chaque changement de ruche :
+    def update_graph(hive_id, measurement_type):
+        df = get_measurements(
+            hive_level_id=hive_id,
+            measurement_type=measurement_type,
+        )
 
-        1. on récupère les données de cette ruche
-        2. on construit le graphique
-        """
-
-        if hive_id is None:
-            # Aucun choix → graphique vide
-            return {}
-
-        # On récupère les pesées filtrées
-        df = get_weighings(level_id=hive_id)
-
-        # On construit le graph Plotly
-        fig = build_weight_graph(df)
-
-        return fig
+        return build_measurements_graph(df[df["type"] == measurement_type])

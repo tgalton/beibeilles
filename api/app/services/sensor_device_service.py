@@ -62,3 +62,40 @@ def get_sensor_by_serial(
         )
 
     return sensor
+
+def get_or_create_by_serial(
+    db: Session,
+    serial_number: str,
+) -> SensorDevice:
+
+    device = (
+        db.query(SensorDevice)
+        .filter(SensorDevice.serial_number == serial_number)
+        .first()
+    )
+
+    if device:
+        return device
+
+    device = SensorDevice(
+        name=f"Device {serial_number}",
+        serial_number=serial_number,
+        hive_id=1,  # ⚠️ ou NULL si tu veux gérer plus tard
+    )
+
+    db.add(device)
+    db.commit()
+    db.refresh(device)
+
+    return device
+
+def associate_device_with_hive(
+    db: Session,
+    serial_number: str,
+    hive_id: int,
+) -> SensorDevice: 
+    
+    sensor = sensor_device_repository.get_by_serial(
+        db=db,
+        serial_number=serial_number,
+    )

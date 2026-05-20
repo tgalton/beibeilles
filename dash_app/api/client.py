@@ -18,29 +18,31 @@ def get_hives():
     return response.json()
 
 
-def get_weighings(level_id: int | None = None):
+def get_measurements(
+    hive_level_id: int | None = None,
+    sensor_device_id: int | None = None,
+    measurement_type: str | None = None,
+):
     """
-    Récupère les pesées depuis l'API.
-
-    level_id :
-        - permet de filtrer par ruche
-        - optionnel
+    Récupère les measurements depuis l'API.
     """
 
     params = {}
 
-    # Si une ruche est sélectionnée → filtre API
-    if level_id is not None:
-        params["level_id"] = level_id
+    if hive_level_id is not None:
+        params["hive_level_id"] = hive_level_id
+
+    if sensor_device_id is not None:
+        params["sensor_device_id"] = sensor_device_id
+
+    if measurement_type is not None:
+        params["measurement_type"] = measurement_type
 
     response = requests.get(
-        f"{API_URL}/weighings",
+        f"{API_URL}/measurements",
         params=params,
     )
 
     response.raise_for_status()
 
-    data = response.json()
-
-    # Transformation en DataFrame pour Plotly
-    return pd.DataFrame(data)
+    return pd.DataFrame(response.json())

@@ -5,32 +5,19 @@ meta {
 }
 
 post {
-  url: {{host}}/iot/ingest
+  url: {{host}}/measurements/ingest
   body: json
   auth: inherit
 }
 
 body:json {
   {
-    "device_uid": "test",
+    "device_serial": "ESP32-RUCHE-001",
     "measurements": [
       {
         "type": "weight",
-        "value": 42.31,
-        "hive_level": 1
-      },
-      {
-        "type": "weight",
-        "value": 38.12,
-        "hive_level": 2
-      },
-      {
-        "type": "temperature",
-        "value": 35.4
-      },
-      {
-        "type": "humidity",
-        "value": 62.1
+        "value": 12.3,
+        "hive_level_id": 1
       }
     ]
   }
