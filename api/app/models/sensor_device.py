@@ -63,7 +63,9 @@ class SensorDevice(Base):
     )
     
     # =====================================================
-    # FK vers Hive
+    # Hive actuellement associée au device
+    # (relation 1 device -> 0/1 hive)
+    # Toute nouvelle association écrase l’ancienne
     # =====================================================
     hive_id: Mapped[int] = mapped_column(
         ForeignKey("hives.id"),

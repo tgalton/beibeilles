@@ -2,6 +2,7 @@ from fastapi import HTTPException
 
 from sqlalchemy.orm import Session
 
+from app.models.hive import Hive
 from app.models.sensor_device import SensorDevice
 
 from app.repositories import sensor_device_repository
@@ -80,7 +81,7 @@ def get_or_create_by_serial(
     device = SensorDevice(
         name=f"Device {serial_number}",
         serial_number=serial_number,
-        hive_id=1,  # ⚠️ ou NULL si tu veux gérer plus tard
+        # Pas de ruche id associé dans ce cas : association à faire plus tard
     )
 
     db.add(device)
@@ -93,9 +94,40 @@ def associate_device_with_hive(
     db: Session,
     serial_number: str,
     hive_id: int,
-) -> SensorDevice: 
-    
+) -> SensorDevice:
+
+    # =====================================================
+    # 1. Récupération du device
+    # =====================================================
     sensor = sensor_device_repository.get_by_serial(
         db=db,
         serial_number=serial_number,
     )
+
+    if sensor is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Sensor device not found",
+        )
+
+    # =====================================================
+    # 2. Vérification hive existe
+    # =====================================================
+    hive = db.query(Hive).filter(Hive.id == hive_id).first()
+
+    if hive is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Hive not found",
+        )
+
+    # =====================================================
+    # 3. Association
+    # =====================================================
+    sensor.hive_id = hive_id
+
+    db.add(sensor)
+    db.commit()
+    db.refresh(sensor)
+
+    return sensor

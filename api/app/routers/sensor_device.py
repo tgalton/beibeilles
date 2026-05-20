@@ -60,3 +60,19 @@ def get_sensor(
         db=db,
         serial_number=serial_number,
     )
+    
+@router.post(
+    "/{serial_number}/associate-hive/{hive_id}",
+    response_model=SensorDeviceRead,
+)
+def associate_hive(
+    serial_number: str,
+    hive_id: int,
+    db: Session = Depends(get_db),
+) -> SensorDevice:
+
+    return sensor_device_service.associate_device_with_hive(
+        db=db,
+        serial_number=serial_number,
+        hive_id=hive_id,
+    )

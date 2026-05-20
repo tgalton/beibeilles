@@ -9,7 +9,6 @@ class SensorDeviceCreate(BaseModel):
 
     serial_number: str
 
-    hive_id: int
 
 
 class SensorDeviceRead(BaseModel):
