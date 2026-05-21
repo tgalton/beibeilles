@@ -1,0 +1,19 @@
+{
+  "python.analysis.typeCheckingMode": "basic",
+
+  "python-envs.defaultEnvManager": "ms-python.python:system",
+
+  "ruff.enable": true,
+  "ruff.lint.run": "onSave",
+
+  "editor.codeActionsOnSave": {
+    "source.fixAll.ruff": "explicit"
+  },
+
+  "python.analysis.diagnosticSeverityOverrides": {
+    "reportUnknownMemberType": "none",
+    "reportUnknownVariableType": "none",
+    "reportUnknownArgumentType": "none",
+    "reportMissingTypeStubs": "none"
+  }
+}

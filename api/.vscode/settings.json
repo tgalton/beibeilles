@@ -8,5 +8,15 @@
       "name": "SQLite Beibeille ",
       "group": "Database Beibeille "
     }
-  ]
+  ],
+  "python.analysis.typeCheckingMode": "strict",
+
+  "python-envs.defaultEnvManager": "ms-python.python:system",
+
+  "ruff.enable": true,
+  "ruff.lint.run": "onSave",
+
+  "editor.codeActionsOnSave": {
+    "source.fixAll.ruff": "explicit"
+  }
 }

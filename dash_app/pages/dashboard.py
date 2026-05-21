@@ -1,91 +1,168 @@
-from dash import html, dcc
-from dash.dependencies import Input, Output
+from dash import dcc
+from dash import html
+from dash.dependencies import Input
+from dash.dependencies import Output
 
-from api.client import get_hives, get_measurements
+from api.client import get_hives
+from api.client import get_measurements
 from components.graph import build_measurements_graph
+import pandas as pd
 
+
+# =========================================================
+# Layout principal
+#
+# IMPORTANT :
+# Le layout décrit UNIQUEMENT l'interface.
+#
+# Aucun appel API lourd ne doit être fait ici.
+#
+# Les données dynamiques sont chargées
+# via les callbacks Dash.
+# =========================================================
 def layout():
-    """
-    Layout = structure de la page.
-
-    IMPORTANT :
-    Ici on NE FAIT PAS d'appel API.
-    On construit juste l'UI.
-    """
 
     return html.Div(
         style={"padding": "20px"},
         children=[
+
+            # =================================================
+            # Titre
+            # =================================================
             html.H1("Dashboard Ruche 🐝"),
 
-            # -----------------------------
-            # Dropdown ruche (chargé dynamiquement)
-            # -----------------------------
+            # =================================================
+            # Sélection de la ruche
+            #
+            # Les options sont injectées dynamiquement
+            # par un callback au démarrage.
+            # =================================================
+            dcc.Dropdown(
+                id="hive-selector",
+                placeholder="Sélectionner une ruche",
+            ),
+
+            html.Br(),
+
+            # =================================================
+            # Sélection du type de mesure
+            # =================================================
             dcc.Dropdown(
                 id="type-selector",
                 options=[
-                    {"label": "Weight", "value": "weight"},
-                    {"label": "Temperature", "value": "temperature"},
-                    {"label": "Humidity", "value": "humidity"},
-                    {"label": "CO2", "value": "co2"},
+                    {
+                        "label": "Poids",
+                        "value": "weight",
+                    },
+                    {
+                        "label": "Température",
+                        "value": "temperature",
+                    },
+                    {
+                        "label": "Humidité",
+                        "value": "humidity",
+                    },
+                    {
+                        "label": "CO2",
+                        "value": "co2",
+                    },
                 ],
                 value="weight",
-            )
+                clearable=False,
+            ),
 
-            # -----------------------------
-            # Graph poids
-            # -----------------------------
-            dcc.Graph(id="weight-graph"),
+            html.Br(),
+
+            # =================================================
+            # Graphique Plotly
+            # =================================================
+            dcc.Graph(
+                id="measurement-graph",
+            ),
         ],
     )
 
 
+# =========================================================
+# Enregistrement des callbacks Dash
+# =========================================================
 def register_callbacks(app):
-    """
-    Les callbacks = logique interactive Dash.
-    """
 
-    # ---------------------------------------------------------
-    # 1) Charger les ruches dans le dropdown au démarrage
-    # ---------------------------------------------------------
+    # =====================================================
+    # Chargement des ruches au démarrage
+    #
+    # Astuce Dash :
+    # on utilise un Input fictif pour déclencher
+    # le callback une seule fois.
+    # =====================================================
     @app.callback(
         Output("hive-selector", "options"),
         Output("hive-selector", "value"),
-        Input("hive-selector", "id"),  # hack Dash: déclenche au chargement
+        Input("hive-selector", "id"),
     )
     def load_hives(_):
-        """
-        Cette fonction s'exécute UNE fois au chargement de la page.
-
-        Elle :
-        - appelle l'API
-        - construit les options du dropdown
-        - sélectionne la première ruche par défaut
-        """
 
         hives = get_hives()
 
+        # -------------------------------------------------
+        # Construction des options du dropdown
+        # -------------------------------------------------
         options = [
-            {"label": hive["name"], "value": hive["id"]}
+            {
+                "label": hive["name"],
+                "value": hive["id"],
+            }
             for hive in hives
         ]
 
-        default_value = hives[0]["id"] if hives else None
+        # -------------------------------------------------
+        # Sélection automatique de la première ruche
+        # -------------------------------------------------
+        default_value = (
+            hives[0]["id"]
+            if hives
+            else None
+        )
 
         return options, default_value
 
 
-    # ---------------------------------------------------------
-    # 2) Mise à jour du graphe quand on change de ruche
-    # ---------------------------------------------------------
+    # =====================================================
+    # Mise à jour du graphique
+    #
+    # Déclenché quand :
+    # - on change de ruche
+    # - on change de type de mesure
+    # =====================================================
     @app.callback(
-        Output("weight-graph", "figure"),
+        Output("measurement-graph", "figure"),
         Input("hive-selector", "value"),
+        Input("type-selector", "value"),
     )
-    def update_graph(hive_id, measurement_type):
+    def update_graph(
+        hive_id,
+        measurement_type,
+    ):
+
+        # -------------------------------------------------
+        # Protection :
+        # aucun graphique tant qu'aucune ruche
+        # n'est sélectionnée
+        # -------------------------------------------------
+        if hive_id is None:
+            return build_measurements_graph(
+                pd.DataFrame()
+            )
+
+        # -------------------------------------------------
+        # Chargement des données
+        # -------------------------------------------------
         df = get_measurements(
             hive_level_id=hive_id,
             measurement_type=measurement_type,
         )
 
-        return build_measurements_graph(df[df["type"] == measurement_type])
+        # -------------------------------------------------
+        # Construction du graphique
+        # -------------------------------------------------
+        return build_measurements_graph(df)

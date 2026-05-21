@@ -1,34 +1,70 @@
-import requests
+from typing import Any
+
 import pandas as pd
+import requests
+import os
 
-# URL interne Docker (service FastAPI)
-API_URL = "http://api:8000"
+from dotenv import load_dotenv
 
 
-def get_hives():
+# =========================================================
+# Sélection environnement
+# =========================================================
+ENV = os.getenv(
+    "APP_ENV",
+    "local",
+)
+
+# =========================================================
+# Chargement du bon fichier .env
+# =========================================================
+if ENV == "docker":
+    load_dotenv(".env.docker")
+else:
+    load_dotenv(".env.local")
+
+
+API_URL = os.getenv(
+    "API_URL",
+    "http://localhost:8000",
+)
+
+# =========================================================
+# Récupération des ruches
+# =========================================================
+def get_hives() -> list[dict[str, Any]]:
     """
-    Récupère la liste des ruches depuis l'API FastAPI.
+    Appelle l'API FastAPI pour récupérer
+    toutes les ruches.
     """
 
     response = requests.get(f"{API_URL}/hives")
 
-    # Si erreur HTTP → exception automatique
+    # Déclenche une exception automatique
+    # si status HTTP != 2xx
     response.raise_for_status()
 
     return response.json()
 
 
+# =========================================================
+# Récupération des measurements
+# =========================================================
 def get_measurements(
     hive_level_id: int | None = None,
     sensor_device_id: int | None = None,
     measurement_type: str | None = None,
-):
+) -> pd.DataFrame:
     """
-    Récupère les measurements depuis l'API.
+    Récupère les mesures depuis l'API
+    puis les convertit en DataFrame pandas.
     """
 
-    params = {}
+    params: dict[str, int | str] = {}
 
+    # -----------------------------------------------------
+    # Construction dynamique des query params
+    # -----------------------------------------------------
     if hive_level_id is not None:
         params["hive_level_id"] = hive_level_id
 
@@ -45,4 +81,7 @@ def get_measurements(
 
     response.raise_for_status()
 
+    # -----------------------------------------------------
+    # Conversion JSON -> DataFrame pandas
+    # -----------------------------------------------------
     return pd.DataFrame(response.json())

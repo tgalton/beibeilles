@@ -4,28 +4,42 @@ from pages.dashboard import layout
 from pages.dashboard import register_callbacks
 
 
-def create_app():
-    """
-    Crée et configure l'application Dash.
-    """
+# =========================================================
+# Factory Dash
+#
+# Sépare :
+# - création app
+# - configuration
+# - lancement
+# =========================================================
+def create_app() -> Dash:
 
     app = Dash(__name__)
 
-    # Layout = interface utilisateur (HTML + composants)
+    # -----------------------------------------------------
+    # Interface utilisateur
+    # -----------------------------------------------------
     app.layout = layout()
 
-    # Callbacks = interactions (dropdown -> graph)
+    # -----------------------------------------------------
+    # Callbacks interactifs
+    # -----------------------------------------------------
     register_callbacks(app)
 
     return app
 
 
-# Création de l'app
+# =========================================================
+# Instance globale Dash
+# =========================================================
 app = create_app()
 
 
+# =========================================================
+# Lancement local
+# =========================================================
 if __name__ == "__main__":
-    # Lance le serveur Dash
+
     app.run(
         debug=True,
         host="0.0.0.0",
