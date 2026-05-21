@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Any
 
 import pandas as pd
@@ -5,6 +6,13 @@ import requests
 import os
 
 from dotenv import load_dotenv
+
+
+
+# =========================================================
+# Dossier courant du projet Dash
+# =========================================================
+BASE_DIR = Path(__file__).resolve().parent
 
 
 # =========================================================
@@ -15,15 +23,26 @@ ENV = os.getenv(
     "local",
 )
 
+
 # =========================================================
 # Chargement du bon fichier .env
 # =========================================================
 if ENV == "docker":
-    load_dotenv(".env.docker")
+
+    load_dotenv(
+        BASE_DIR / ".env.docker",
+    )
+
 else:
-    load_dotenv(".env.local")
+
+    load_dotenv(
+        BASE_DIR / ".env.local",
+    )
 
 
+# =========================================================
+# URL API FastAPI
+# =========================================================
 API_URL = os.getenv(
     "API_URL",
     "http://localhost:8000",
