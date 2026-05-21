@@ -13,7 +13,6 @@ from app.schemas.measurement import (
 
 from app.services import measurement_service
 from app.schemas.iot_ingest import IoTIngest
-from app.services import measurement_service
 
 
 
