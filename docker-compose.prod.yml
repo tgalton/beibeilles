@@ -1,0 +1,26 @@
+services:
+  api:
+    image: ghcr.io/tgalton/beibeilles-api:latest
+    container_name: beibeilles-api
+    pull_policy: always
+    environment:
+      DATABASE_URL: postgresql+psycopg://beibeilles:beibeilles@timescaledb:5432/beibeilles
+    ports:
+      - "8000:8000"
+
+  dash:
+    image: ghcr.io/tgalton/beibeilles-dash:latest
+    container_name: beibeilles-dash
+    pull_policy: always
+    environment:
+      API_URL: http://api:8000
+    ports:
+      - "8050:8050"
+
+  watchtower:
+    image: containrrr/watchtower:1.5.3
+    container_name: watchtower
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 30

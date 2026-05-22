@@ -3,7 +3,9 @@
 <!-- Nettoyage de tout les docker -> docker system prune -a --volumes -f -->
 <!-- Suppresion manuelle contener de la base : docker volume rm beibeilles_timescaledb_data -->
 <!-- Création d'arbre : find . -print | sed -e 's;[^/]*/;|   ;g' -->
-<!-- Création de fichier d'arborescence : cmd //c "tree /F /A > arborescence.txt" -->
+
+cmd //c "tree /F /A > arborescence.txt"<!-- Création de fichier d'arborescence :-->
+
 <!-- Mdp temporaire bdd : 4b90cedb66834ff8ab4a1d38ff0d5d15 -->
 
 uvicorn app.main:app --reload <!-- Lancer pour tester le back en local avant de pousser -->
@@ -13,6 +15,10 @@ http://79.137.34.118:8000/openapi.json <!--donne le json de l'api -->
 rm beehive.db <!-- Supprime sqlite locale -->
 
 docker logs watchtower -f
+
+<!-- Tout lancer en docker local--> docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+<!-- Tout down en docker local--> docker compose -f docker-compose.yml -f docker-compose.dev.yml down -v
+<!-- Tout rebuild sans cache en docker local-->docker compose -f docker-compose.yml -f docker-compose.dev.yml build --no-cache
 
 # Plateforme de supervision apicole connectée
 

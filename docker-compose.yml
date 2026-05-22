@@ -1,12 +1,23 @@
 services:
+  api:
+    restart: always
+    depends_on:
+      timescaledb:
+        condition: service_healthy
+
+  dash:
+    restart: always
+    depends_on:
+      api:
+        condition: service_started
+
   timescaledb:
     image: timescale/timescaledb:latest-pg16
+    restart: always
     environment:
       POSTGRES_USER: beibeilles
       POSTGRES_PASSWORD: beibeilles
       POSTGRES_DB: beibeilles
-    ports:
-      - "5432:5432"
     volumes:
       - timescaledb_data:/var/lib/postgresql/data
     healthcheck:
@@ -14,26 +25,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
-
-  api:
-    build: ./api
-    depends_on:
-      timescaledb:
-        condition: service_healthy
-    environment:
-      DATABASE_URL: postgresql+psycopg://beibeilles:beibeilles@timescaledb:5432/beibeilles
-    ports:
-      - "8000:8000"
-
-  dash:
-    build: ./dash_app
-    depends_on:
-      api:
-        condition: service_started
-    environment:
-      API_URL: http://api:8000
-    ports:
-      - "8050:8050"
 
 volumes:
   timescaledb_data:
