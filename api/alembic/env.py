@@ -5,7 +5,7 @@ from alembic import context
 import os
 
 from app.database import Base
-from app.models import *  # important pour autogenerate
+from app.models import *  # important pour autogenerate  # noqa: F403
 
 config = context.config
 
