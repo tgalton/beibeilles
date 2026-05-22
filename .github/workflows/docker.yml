@@ -61,10 +61,12 @@ jobs:
       # évite les mauvaises surprises en prod
       # =====================================================
       - name: Validate Alembic migrations
+        env:
+          DATABASE_URL: sqlite:///./ci_test.db
+          PYTHONPATH: .
         run: |
           cd api
           alembic upgrade head
-
       # =====================================================
       # Login GitHub Container Registry
       # =====================================================
