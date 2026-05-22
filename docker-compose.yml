@@ -26,5 +26,7 @@ services:
       timeout: 5s
       retries: 10
 
+# Pour garder les anciennes données lors d'un déploiement
 volumes:
   timescaledb_data:
+    name: deploy_timescaledb_data

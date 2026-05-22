@@ -1,4 +1,8 @@
 services:
+  timescaledb:
+    ports:
+      - "127.0.0.1:5432:5432"
+
   api:
     image: ghcr.io/tgalton/beibeilles-api:latest
     container_name: beibeilles-api
@@ -24,7 +28,3 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     command: --interval 30
-
-  timescaledb:
-    ports:
-      - "127.0.0.1:5432:5432"
