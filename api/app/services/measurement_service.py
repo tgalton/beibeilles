@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, UTC
 
 from fastapi import HTTPException
 
@@ -94,6 +94,7 @@ def ingest_measurements(
     # =====================================================
     # 2. transformer payload -> ORM
     # =====================================================
+
     for m in payload.measurements:
 
         db_measurement = Measurement(
@@ -101,6 +102,7 @@ def ingest_measurements(
             value=m.value,
             hive_level_id=m.hive_level_id,
             sensor_device_id=sensor_device.id,
+            measured_at= datetime.now(UTC),
         )
 
         created_measurements.append(db_measurement)
