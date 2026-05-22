@@ -5,6 +5,7 @@ from sqlalchemy import Float
 from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
 from sqlalchemy import String
+from sqlalchemy.sql import func
 
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
@@ -45,11 +46,10 @@ class Measurement(Base):
     # =========================================================
     measured_at: Mapped[datetime] = mapped_column(
         DateTime,
-        default=datetime.now(UTC),
+        server_default=func.now(),
         nullable=False,
         index=True,
     )
-
     # =========================================================
     # Device ayant envoyé la mesure
     # =========================================================

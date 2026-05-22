@@ -1,0 +1,24 @@
+meta {
+  name: Sensor Device associate with hive
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{host}}/sensor-devices
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "esp32_ruche_1",
+    "hive_id": "1",
+    "serial_number": "testr"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
