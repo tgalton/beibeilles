@@ -17,5 +17,7 @@ COPY . .
 EXPOSE 8000
 
 # Commande de lancement
-# On met 0.0.0.0 pour que localhost ne soit pas visible que dans le contener
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]

@@ -8,6 +8,7 @@ services:
     container_name: beibeilles-api
     pull_policy: always
     environment:
+      ENV: prod
       DATABASE_URL: postgresql+psycopg://beibeilles:beibeilles@timescaledb:5432/beibeilles
     ports:
       - "8000:8000"

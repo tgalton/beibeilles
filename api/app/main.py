@@ -1,5 +1,6 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
+import os
 
 from app.database import Base
 from app.database import engine
@@ -21,7 +22,11 @@ async def lifespan(app: FastAPI):
     # =====================================================
     # Création automatique des tables SQLAlchemy
     # =====================================================
-    Base.metadata.create_all(bind=engine)
+
+    IS_DEV = os.getenv("ENV", "dev") == "dev"
+
+    if IS_DEV:
+        Base.metadata.create_all(bind=engine)
 
     yield
 

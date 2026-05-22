@@ -3,6 +3,7 @@ services:
     build: ./api
     environment:
       DATABASE_URL: sqlite:///./beehive.db
+      ENV: dev
     ports:
       - "8000:8000"
     volumes:

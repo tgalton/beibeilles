@@ -19,6 +19,7 @@ docker logs watchtower -f
 <!-- Tout lancer en docker local--> docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 <!-- Tout down en docker local--> docker compose -f docker-compose.yml -f docker-compose.dev.yml down -v
 <!-- Tout rebuild sans cache en docker local-->docker compose -f docker-compose.yml -f docker-compose.dev.yml build --no-cache
+<!-- Générer migration des données --> alembic revision --autogenerate -m "..."
 
 # Plateforme de supervision apicole connectée
 
