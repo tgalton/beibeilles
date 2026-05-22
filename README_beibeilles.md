@@ -11,15 +11,17 @@ cmd //c "tree /F /A > arborescence.txt"<!-- Création de fichier d'arborescence 
 uvicorn app.main:app --reload <!-- Lancer pour tester le back en local avant de pousser -->
 cd dash_app python app.py <!-- Lancer pour tester le front en local avant de pousser -->
 
-http://79.137.34.118:8000/openapi.json <!--donne le json de l'api -->
-rm beehive.db <!-- Supprime sqlite locale -->
+<!--donne le json de l'api --> http://79.137.34.118:8000/openapi.json
+<!-- Supprime sqlite locale --> rm beehive.db
 
-docker logs watchtower -f
+<!-- Voir logs watchtower sur server --> docker logs watchtower -f
 
 <!-- Tout lancer en docker local--> docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 <!-- Tout down en docker local--> docker compose -f docker-compose.yml -f docker-compose.dev.yml down -v
 <!-- Tout rebuild sans cache en docker local-->docker compose -f docker-compose.yml -f docker-compose.dev.yml build --no-cache
 <!-- Générer migration des données --> alembic revision --autogenerate -m "..."
+<!-- Aller sur le postgre de la bdd depuis server --> docker exec -it beibeilles-timescaledb-1 psql -U beibeilles -d beibeilles
+<!-- Pour voir les tables ensuite --> \dt
 
 # Plateforme de supervision apicole connectée
 
