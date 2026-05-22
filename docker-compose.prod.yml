@@ -22,9 +22,11 @@ services:
       - "8050:8050"
 
   watchtower:
-    image: containrrr/watchtower:1.5.3
+    image: containrrr/watchtower:latest
     container_name: watchtower
     restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     command: --interval 30
+    environment:
+      - DOCKER_API_VERSION=1.44
