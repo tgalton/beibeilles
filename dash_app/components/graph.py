@@ -12,6 +12,13 @@ def build_measurements_graph(
     à partir des measurements.
     """
 
+    # TODO à delete 
+    print("DATAFRAME:")
+    print(df)
+
+    print("COLUMNS:")
+    print(df.columns.tolist())
+
     # =====================================================
     # Sécurité :
     # données absentes ou invalides

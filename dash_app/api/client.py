@@ -103,13 +103,23 @@ def get_measurements(
         params["end_at"] = end_at.isoformat()
 
     response = requests.get(
-        f"{API_URL}/measurements",
-        params=params,
+    f"{API_URL}/measurements",
+    params=params,
     )
+
+    print("URL =", response.url)
+    print("STATUS =", response.status_code)
+    print("TEXT =", response.text[:500])
 
     response.raise_for_status()
 
-    # -----------------------------------------------------
-    # Conversion JSON -> DataFrame pandas
-    # -----------------------------------------------------
-    return pd.DataFrame(response.json())
+    data = response.json()
+
+    print("JSON TYPE =", type(data))
+
+    df = pd.DataFrame(data)
+
+    print(df.head())
+    print(df.columns)
+
+    return df
