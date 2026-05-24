@@ -4,6 +4,7 @@ from typing import Any
 import pandas as pd
 import requests
 import os
+from datetime import datetime
 
 from dotenv import load_dotenv
 
@@ -73,6 +74,8 @@ def get_measurements(
     hive_level_id: int | None = None,
     sensor_device_id: int | None = None,
     measurement_type: str | None = None,
+    start_at: datetime | None = None,
+    end_at: datetime | None = None,
 ) -> pd.DataFrame:
     """
     Récupère les mesures depuis l'API
@@ -92,6 +95,12 @@ def get_measurements(
 
     if measurement_type is not None:
         params["measurement_type"] = measurement_type
+        
+    if start_at is not None:
+        params["start_at"] = start_at.isoformat()
+
+    if end_at is not None:
+        params["end_at"] = end_at.isoformat()
 
     response = requests.get(
         f"{API_URL}/measurements",

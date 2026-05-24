@@ -59,7 +59,7 @@ def get_all(
     sensor_device_id: int | None = None,
     start_at: datetime | None = None,
     end_at: datetime | None = None,
-    limit: int = 100,
+    limit: int | None= 10000,
 ) -> list[Measurement]:
 
     query = db.query(Measurement)
@@ -93,11 +93,13 @@ def get_all(
         query = query.filter(
             Measurement.measured_at <= end_at,
         )
+        
 
     query = query.order_by(
         Measurement.measured_at.desc(),
     )
 
-    query = query.limit(limit)
+    if limit is not None:
+        query = query.limit(limit)
 
     return query.all()

@@ -47,7 +47,7 @@ def get_measurements(
     sensor_device_id: int | None = None,
     start_at: datetime | None = None,
     end_at: datetime | None = None,
-    limit: int = 100,
+    limit: int = 10000,
     db: Session = Depends(get_db),
 ):
 

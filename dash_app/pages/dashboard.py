@@ -6,6 +6,11 @@ from dash.dependencies import Output
 from api.client import get_hives
 from api.client import get_measurements
 from components.graph import build_measurements_graph
+
+from datetime import datetime
+from datetime import timedelta
+from datetime import UTC
+
 import pandas as pd
 
 
@@ -70,6 +75,30 @@ def layout():
                 value="weight",
                 clearable=False,
             ),
+            
+            dcc.Dropdown(
+                id="time-range-selector",
+                options=[
+                    {
+                        "label": "1 heure",
+                        "value": "1h",
+                    },
+                    {
+                        "label": "24 heures",
+                        "value": "24h",
+                    },
+                    {
+                        "label": "7 jours",
+                        "value": "7d",
+                    },
+                    {
+                        "label": "30 jours",
+                        "value": "30d",
+                    },
+                ],
+                value="24h",
+                clearable=False,
+            ),
 
             html.Br(),
 
@@ -99,11 +128,11 @@ def register_callbacks(app):
         Output("hive-selector", "options"),
         Output("hive-selector", "value"),
         Input("hive-selector", "id"),
+        Input("time-range-selector", "value"),
     )
     def load_hives(_):
 
         hives = get_hives()
-
         # -------------------------------------------------
         # Construction des options du dropdown
         # -------------------------------------------------
@@ -142,7 +171,26 @@ def register_callbacks(app):
     def update_graph(
         hive_id,
         measurement_type,
+        time_range,
     ):
+        
+        # Création de la plage de sélection horaire
+        now = datetime.now(UTC)
+
+        if time_range == "1h":
+            start_at = now - timedelta(hours=1)
+
+        elif time_range == "24h":
+            start_at = now - timedelta(hours=24)
+
+        elif time_range == "7d":
+            start_at = now - timedelta(days=7)
+
+        elif time_range == "30d":
+            start_at = now - timedelta(days=30)
+
+        else:
+            start_at = now - timedelta(hours=24)
 
         # -------------------------------------------------
         # Protection :
@@ -160,6 +208,8 @@ def register_callbacks(app):
         df = get_measurements(
             hive_level_id=hive_id,
             measurement_type=measurement_type,
+            start_at=start_at,
+            end_at=now,
         )
 
         # -------------------------------------------------
