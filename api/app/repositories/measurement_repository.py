@@ -101,5 +101,8 @@ def get_all(
 
     if limit is not None:
         query = query.limit(limit)
+        
+    # TODO TGA : Enlever après debug
+    print(query)
 
     return query.all()

@@ -211,7 +211,13 @@ def register_callbacks(app):
             end_at=now,
         )
 
+        # TODO TGA : enlever après debug
+        print(start_at)
+        print(now)
+        print(df.head())
+        print(df.shape)
         # -------------------------------------------------
         # Construction du graphique
         # -------------------------------------------------
         return build_measurements_graph(df)
+    
