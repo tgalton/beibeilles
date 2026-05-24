@@ -128,7 +128,6 @@ def register_callbacks(app):
         Output("hive-selector", "options"),
         Output("hive-selector", "value"),
         Input("hive-selector", "id"),
-        Input("time-range-selector", "value"),
     )
     def load_hives(_):
 
