@@ -166,7 +166,7 @@ def register_callbacks(app):
         Output("measurement-graph", "figure"),
         Input("hive-selector", "value"),
         Input("type-selector", "value"),
-    )
+        Input("time-range-selector", "value"),)
     def update_graph(
         hive_id,
         measurement_type,
