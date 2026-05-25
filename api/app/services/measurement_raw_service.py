@@ -11,6 +11,9 @@ from app.repositories import sensor_device_repository
 
 from app.schemas.iot_ingest import IoTIngest
 
+from fastapi import HTTPException
+
+
 
 def ingest_measurements(
     db: Session,
@@ -81,4 +84,59 @@ def ingest_measurements(
     return measurement_raw_repository.create_many(
         db=db,
         measurements=created_measurements,
+    )
+    
+    
+    
+def get_measurement_by_id(
+    db: Session,
+    measurement_id: int,
+) -> MeasurementRaw:
+    """
+    =========================================================
+    Lecture d'une mesure RAW par ID.
+    =========================================================
+    """
+
+    measurement = (
+        measurement_raw_repository.get_by_id(
+            db=db,
+            measurement_id=measurement_id,
+        )
+    )
+
+    if measurement is None:
+
+        raise HTTPException(
+            status_code=404,
+            detail="Measurement RAW not found",
+        )
+
+    return measurement
+
+
+
+def get_measurements(
+    db: Session,
+    measurement_type: str | None = None,
+    hive_level_id: int | None = None,
+    sensor_device_id: int | None = None,
+    start_at: datetime | None = None,
+    end_at: datetime | None = None,
+    limit: int = 1000,
+) -> list[MeasurementRaw]:
+    """
+    =========================================================
+    Lecture des mesures RAW.
+    =========================================================
+    """
+
+    return measurement_raw_repository.get_all(
+        db=db,
+        measurement_type=measurement_type,
+        hive_level_id=hive_level_id,
+        sensor_device_id=sensor_device_id,
+        start_at=start_at,
+        end_at=end_at,
+        limit=limit,
     )
