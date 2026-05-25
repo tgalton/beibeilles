@@ -2,7 +2,7 @@ from datetime import UTC
 from datetime import datetime
 from datetime import timedelta
 
-from sqlalchemy import func
+from sqlalchemy import UniqueConstraint, func
 from sqlalchemy.orm import Session
 
 from app.models.measurement_5m import Measurement5m
@@ -43,6 +43,14 @@ def aggregate_last_5_minutes(
 
     bucket_start = bucket_end - timedelta(
         minutes=BUCKET_MINUTES,
+    )
+    
+    # Un bucket 5 minutes doit être unique pour : 1 capteur, 1 type, 1 ruche
+    UniqueConstraint(
+        "bucket_at",
+        "type",
+        "sensor_device_id",
+        "hive_level_id",
     )
 
     results = (
