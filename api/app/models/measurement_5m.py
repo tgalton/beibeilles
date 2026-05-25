@@ -6,7 +6,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
 from sqlalchemy import String
 
-from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import Mapped, relationship
 from sqlalchemy.orm import mapped_column
 
 from app.database import Base
@@ -80,6 +80,11 @@ class Measurement5m(Base):
         ForeignKey("sensor_devices.id"),
         nullable=False,
         index=True,
+    )
+    
+    sensor_device = relationship(
+        "SensorDevice",
+        back_populates="measurements_5m",
     )
 
     hive_level_id: Mapped[int | None] = mapped_column(

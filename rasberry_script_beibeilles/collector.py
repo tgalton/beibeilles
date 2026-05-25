@@ -17,7 +17,7 @@ BAUDRATE = 115200
 # - lit la série USB
 # - transmet à l'API REST
 # =========================================================
-API_URL = "http://79.137.34.118:8000//measurements/ingest"
+API_URL = "http://79.137.34.118:8000//measurements/raw/ingest"
 
 
 def main():

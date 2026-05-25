@@ -87,6 +87,7 @@ class MeasurementRaw(Base):
 
     sensor_device = relationship(
         "SensorDevice",
+        back_populates="measurements_raw",
     )
 
     # =========================================================

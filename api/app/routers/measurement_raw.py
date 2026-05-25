@@ -21,7 +21,9 @@ router = APIRouter(
     tags=["Measurements RAW"],
 )
 
-
+@router.post(
+    "/raw/ingest",
+    response_model=list[MeasurementRead],)
 @router.post(
     "/ingest",
     response_model=list[MeasurementRead],
