@@ -17,7 +17,7 @@ from app.services import measurement_raw_service
 
 
 router = APIRouter(
-    prefix="/measurements/raw",
+    prefix="/measurements",
     tags=["Measurements RAW"],
 )
 
