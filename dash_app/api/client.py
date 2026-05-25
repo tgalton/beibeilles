@@ -103,8 +103,8 @@ def get_measurements(
         params["end_at"] = end_at.isoformat()
 
     response = requests.get(
-    f"{API_URL}/measurements",
-    params=params,
+        f"{API_URL}/measurements/5m",
+        params=params,
     )
 
     print("URL =", response.url)

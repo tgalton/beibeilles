@@ -13,8 +13,35 @@ from sqlalchemy.orm import relationship
 from app.database import Base
 
 
-class Measurement(Base):
-    __tablename__ = "measurements"
+class MeasurementRaw(Base):
+    """
+    =========================================================
+    TABLE measurements_raw
+    =========================================================
+
+    Cette table contient les données BRUTES envoyées
+    par les Raspberry.
+
+    IMPORTANT :
+    - aucune agrégation ici
+    - aucune moyenne ici
+    - aucune transformation ici
+
+    Cette table est la source de vérité du système.
+
+    Utilisation :
+    - ingestion IoT
+    - debug capteurs
+    - récupération après perte réseau
+    - recalcul futur d'agrégations
+
+    ATTENTION :
+    Cette table ne doit PAS être utilisée directement
+    par Plotly pour les longues périodes.
+    =========================================================
+    """
+
+    __tablename__ = "measurements_raw"
 
     id: Mapped[int] = mapped_column(
         Integer,
@@ -44,21 +71,22 @@ class Measurement(Base):
     # Date réelle de la mesure
     # =========================================================
     measured_at: Mapped[datetime] = mapped_column(
-        DateTime,
+        DateTime(timezone=True),
         nullable=False,
         index=True,
     )
+
     # =========================================================
     # Device ayant envoyé la mesure
     # =========================================================
     sensor_device_id: Mapped[int] = mapped_column(
         ForeignKey("sensor_devices.id"),
         nullable=False,
+        index=True,
     )
 
     sensor_device = relationship(
         "SensorDevice",
-        back_populates="measurements",
     )
 
     # =========================================================
@@ -68,6 +96,7 @@ class Measurement(Base):
     hive_level_id: Mapped[int | None] = mapped_column(
         ForeignKey("hive_levels.id"),
         nullable=True,
+        index=True,
     )
 
     hive_level = relationship(
