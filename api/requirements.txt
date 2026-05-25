@@ -9,4 +9,3 @@ psycopg[binary]
 ruff
 mypy
 alembic
-dateutil
