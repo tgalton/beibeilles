@@ -1,22 +1,14 @@
 from app.database import SessionLocal
 
 from app.services.measurement_aggregation_service import (
-    aggregate_last_5_minutes,
+    aggregate_measurements_5m,
 )
+
 
 def main() -> None:
     """
     =========================================================
-    Script d'agrégation des mesures RAW
-    vers la table measurement_5m.
-    =========================================================
-
-    Ce script est exécuté périodiquement
-    via cron/docker.
-
-    IMPORTANT :
-    il ne doit JAMAIS être appelé
-    depuis les endpoints FastAPI.
+    Lance l'agrégation 5 minutes.
     =========================================================
     """
 
@@ -24,13 +16,9 @@ def main() -> None:
 
     try:
 
-        print("Starting 5m aggregation...")
-
-        aggregate_last_5_minutes(
+        aggregate_measurements_5m(
             db=db,
         )
-
-        print("5m aggregation completed.")
 
     finally:
 
