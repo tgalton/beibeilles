@@ -13,6 +13,24 @@ jobs:
       packages: write
       contents: read
 
+    services:
+      postgres:
+        image: timescale/timescaledb:latest-pg16
+
+        env:
+          POSTGRES_USER: beibeilles
+          POSTGRES_PASSWORD: beibeilles
+          POSTGRES_DB: beibeilles
+
+        ports:
+          - 5432:5432
+
+        options: >-
+          --health-cmd "pg_isready -U beibeilles -d beibeilles"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -51,24 +69,36 @@ jobs:
       # Vérifie que FastAPI démarre correctement
       # =====================================================
       - name: Validate FastAPI startup
+        env:
+          DATABASE_URL: postgresql+psycopg://beibeilles:beibeilles@localhost:5432/beibeilles
         run: |
           cd api
           python -c "from app.main import app"
 
       # =====================================================
-      # Vérifie qu'Alembic charge correctement
-      # IMPORTANT :
-      # évite les mauvaises surprises en prod
+      # Vérifie les migrations
       # =====================================================
       - name: Validate Alembic migrations
         env:
-          DATABASE_URL: sqlite:///./ci_test.db
+          DATABASE_URL: postgresql+psycopg://beibeilles:beibeilles@localhost:5432/beibeilles
           PYTHONPATH: .
         run: |
           cd api
           alembic upgrade head
+
       # =====================================================
-      # Login GitHub Container Registry
+      # Vérifie le script d'agrégation
+      # =====================================================
+      - name: Validate aggregation script
+        env:
+          DATABASE_URL: postgresql+psycopg://beibeilles:beibeilles@localhost:5432/beibeilles
+          PYTHONPATH: .
+        run: |
+          cd api
+          python scripts/aggregate_measurements_5m.py
+
+      # =====================================================
+      # Login GHCR
       # =====================================================
       - name: Login to GHCR
         run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u tgalton --password-stdin

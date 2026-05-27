@@ -1,5 +1,26 @@
-<!-- Lancement -> docker compose up --build -->
-<!-- Fermeture des contener -> docker compose down -v  -->
+docker compose \
+-f docker-compose.yml \
+-f docker-compose.dev.yml \
+up --build
+
+ <!-- Lancement local -->
+
+docker compose \
+-f docker-compose.yml \
+-f docker-compose.dev.yml \
+down -v
+
+<!-- Reset complet local -->
+
+docker compose \
+-f docker-compose.yml \
+-f docker-compose.prod.yml \
+up -d
+
+<!-- Lancement prod -->
+
+docker compose -f docker-compose.yml -f docker-compose.dev.yml down -v <!-- Fermeture des contener -->
+
 <!-- Nettoyage de tout les docker -> docker system prune -a --volumes -f -->
 <!-- Suppresion manuelle contener de la base : docker volume rm beibeilles_timescaledb_data -->
 <!-- Création d'arbre : find . -print | sed -e 's;[^/]*/;|   ;g' -->

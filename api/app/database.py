@@ -2,6 +2,8 @@ import os
 
 from collections.abc import Generator
 
+from dotenv import load_dotenv
+
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
 
@@ -13,42 +15,48 @@ from tenacity import retry
 from tenacity import stop_after_attempt
 from tenacity import wait_fixed
 
-from dotenv import load_dotenv
-
 
 # =========================================================
 # Chargement du fichier .env
 #
-# En développement local :
-# Python lira automatiquement :
-#
-# DATABASE_URL=sqlite:///./beehive.db
-#
-# En Docker / production :
+# IMPORTANT :
+# En Docker :
 # les variables d'environnement Docker
-# écraseront celles du .env.
+# écrasent automatiquement celles du .env
+#
+# En local :
+# Python utilisera le fichier .env
 # =========================================================
 load_dotenv()
 
 
 # =========================================================
-# URL de connexion SQLAlchemy
+# URL de connexion PostgreSQL / TimescaleDB
 #
-# Fallback :
-# SQLite local si DATABASE_URL n'existe pas.
+# IMPORTANT :
+# Il n'y a PLUS de fallback SQLite.
+#
+# Ca évite :
+# - environnements incohérents
+# - comportements SQL différents
+# - migrations cassées
+# - bugs impossibles à reproduire
 # =========================================================
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "sqlite:///./beehive.db",
-)
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if DATABASE_URL is None:
+
+    raise RuntimeError(
+        "DATABASE_URL environment variable is missing",
+    )
 
 
 # =========================================================
 # Base SQLAlchemy
 #
-# Tous les modèles hériteront de Base.
+# Tous les modèles héritent de Base.
 #
-# SQLAlchemy utilisera Base.metadata
+# SQLAlchemy utilise Base.metadata
 # pour connaître automatiquement
 # toutes les tables du projet.
 # =========================================================
@@ -60,44 +68,23 @@ class Base(DeclarativeBase):
 # Création du moteur SQLAlchemy
 #
 # Le moteur représente :
-# - la connexion à la DB
+# - la connexion PostgreSQL
 # - le pool de connexions
 # - la configuration SQLAlchemy
 #
-# IMPORTANT :
-# SQLite nécessite :
+# pool_pre_ping=True :
 #
-# check_same_thread=False
+# vérifie automatiquement
+# qu'une connexion SQL est encore valide
+# avant de l'utiliser.
 #
-# car FastAPI peut utiliser plusieurs threads.
+# Très utile avec :
+# - Docker
+# - redémarrages DB
+# - connexions longues
 # =========================================================
 def create_db_engine() -> Engine:
 
-    # =====================================================
-    # Cas SQLite local
-    # =====================================================
-    if DATABASE_URL.startswith("sqlite"):
-
-        return create_engine(
-            DATABASE_URL,
-
-            # =================================================
-            # SQLite interdit par défaut
-            # les accès multi-threads.
-            #
-            # FastAPI pouvant utiliser plusieurs threads,
-            # on désactive cette protection.
-            # =================================================
-            connect_args={
-                "check_same_thread": False,
-            },
-
-            pool_pre_ping=True,
-        )
-
-    # =====================================================
-    # Cas PostgreSQL / TimescaleDB
-    # =====================================================
     return create_engine(
         DATABASE_URL,
         pool_pre_ping=True,
@@ -113,10 +100,9 @@ engine = create_db_engine()
 # =========================================================
 # Attente que PostgreSQL soit disponible
 #
-# Utile surtout avec Docker Compose :
-#
-# - le container API peut démarrer
-#   avant PostgreSQL
+# IMPORTANT :
+# Avec Docker Compose,
+# l'API peut démarrer AVANT PostgreSQL.
 #
 # Tenacity retry automatiquement :
 # - 20 tentatives
@@ -126,29 +112,26 @@ engine = create_db_engine()
     stop=stop_after_attempt(20),
     wait=wait_fixed(2),
 )
-def wait_for_db(engine: Engine) -> None:
+def wait_for_db(
+    engine: Engine,
+) -> None:
 
     # =====================================================
-    # SQLite est un simple fichier local.
+    # Tentative réelle de connexion SQL
     #
-    # Il est toujours disponible immédiatement.
-    #
-    # Donc inutile d'attendre.
-    # =====================================================
-    if DATABASE_URL.startswith("sqlite"):
-        return
-
-    # =====================================================
-    # PostgreSQL :
-    # tentative réelle de connexion.
-    #
-    # Si échec :
-    # exception => retry Tenacity
+    # Si PostgreSQL n'est pas prêt :
+    # exception -> retry automatique
     # =====================================================
     with engine.connect():
+
+        print("Database connection established.")
+
         return
 
 
+# =========================================================
+# Attente disponibilité DB
+# =========================================================
 wait_for_db(engine)
 
 
@@ -183,7 +166,9 @@ def get_db() -> Generator[Session, None, None]:
     db = SessionLocal()
 
     try:
+
         yield db
 
     finally:
+
         db.close()
