@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime
+from sqlalchemy import DateTime, UniqueConstraint
 from sqlalchemy import Float
 from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
@@ -37,6 +37,16 @@ class Measurement5m(Base):
     """
 
     __tablename__ = "measurements_5m"
+    
+    __table_args__ = (
+        UniqueConstraint(
+            "bucket_at",
+            "type",
+            "sensor_device_id",
+            "hive_level_id",
+            name="uq_measurement_5m_bucket",
+        ),
+    )
 
     id: Mapped[int] = mapped_column(
         Integer,

@@ -4,6 +4,16 @@ FROM python:3.12-slim
 # Dossier de travail dans le conteneur
 WORKDIR /app
 
+# =========================================================
+# IMPORTANT :
+# permet :
+#
+# from app.database import ...
+#
+# dans tous les scripts Python
+# =========================================================
+ENV PYTHONPATH=/app
+
 # Copie des dépendances
 COPY requirements.txt .
 

@@ -1,9 +1,8 @@
 from app.database import SessionLocal
 
 from app.services.measurement_aggregation_service import (
-    aggregate_measurements_5m,
+    aggregate_last_5_minutes,
 )
-
 
 def main() -> None:
     """
@@ -27,7 +26,7 @@ def main() -> None:
 
         print("Starting 5m aggregation...")
 
-        aggregate_measurements_5m(
+        aggregate_last_5_minutes(
             db=db,
         )
 
