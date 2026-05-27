@@ -42,16 +42,7 @@ load_dotenv()
 # - migrations cassées
 # - bugs impossibles à reproduire
 # =========================================================
-DATABASE_URL = os.getenv("DATABASE_URL")
-
-if DATABASE_URL is None:
-    DATABASE_URL = ""
-    raise RuntimeError(
-        "DATABASE_URL environment variable is missing",
-    )
-    
-
-DATABASE_URL = str(DATABASE_URL)
+DATABASE_URL: str = os.environ["DATABASE_URL"]
 
 # =========================================================
 # Base SQLAlchemy
