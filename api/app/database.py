@@ -50,6 +50,7 @@ if DATABASE_URL is None:
         "DATABASE_URL environment variable is missing",
     )
 
+DATABASE_URL = str(DATABASE_URL)
 
 # =========================================================
 # Base SQLAlchemy
