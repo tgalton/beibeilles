@@ -40,18 +40,6 @@ def upgrade() -> None:
     op.create_index(op.f('ix_measurements_5m_id'), 'measurements_5m', ['id'], unique=False)
     op.create_index(op.f('ix_measurements_5m_sensor_device_id'), 'measurements_5m', ['sensor_device_id'], unique=False)
     op.create_index(op.f('ix_measurements_5m_type'), 'measurements_5m', ['type'], unique=False)
-    op.create_index(
-        "ix_measurements_5m_bucket_at",
-        "measurements_5m",
-        ["bucket_at"],
-        unique=False,
-    )
-    op.create_index(
-        "ix_measurements_raw_measured_at",
-        "measurements_raw",
-        ["measured_at"],
-        unique=False,
-    )
     op.create_unique_constraint(
         "uq_measurement_5m_bucket",
         "measurements_5m",
@@ -77,7 +65,6 @@ def downgrade() -> None:
     op.drop_index(op.f('ix_measurements_raw_id'), table_name='measurements_raw')
     op.drop_index(op.f('ix_measurements_raw_hive_level_id'), table_name='measurements_raw')
     op.drop_constraint(None, 'measurements_5m', type_='foreignkey')
-    op.drop_constraint('uq_measurement_5m_bucket', 'measurements_5m', type_='unique')
     op.drop_index(op.f('ix_measurements_5m_type'), table_name='measurements_5m')
     op.drop_index(op.f('ix_measurements_5m_sensor_device_id'), table_name='measurements_5m')
     op.drop_index(op.f('ix_measurements_5m_id'), table_name='measurements_5m')
