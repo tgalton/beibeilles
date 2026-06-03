@@ -12,13 +12,24 @@ def build_measurements_graph(
     à partir des measurements.
     """
 
-    # TODO à delete 
-    print("DATAFRAME:")
-    print(df)
+    # vérifie la présence des bonnes colonne pour évite problème futur maj
+    required_columns = [
+        "bucket_at",
+        "avg_value",
+        "type",
+    ]
 
-    print("COLUMNS:")
-    print(df.columns.tolist())
+    missing_columns = [
+        column
+        for column in required_columns
+        if column not in df.columns
+    ]
 
+    if missing_columns:
+
+        return px.line(
+            title=f"Colonnes manquantes : {missing_columns}",
+        )
     # =====================================================
     # Sécurité :
     # données absentes ou invalides
@@ -32,24 +43,26 @@ def build_measurements_graph(
     # =====================================================
     # Conversion datetime
     # =====================================================
-    df["measured_at"] = pd.to_datetime(
-        df["measured_at"],
+    df["bucket_at"] = pd.to_datetime(
+        df["bucket_at"],
     )
 
     # =====================================================
     # Tri chronologique
     # =====================================================
+
     df = df.sort_values(
-        "measured_at",
+        "bucket_at",
     )
 
     # =====================================================
     # Construction figure Plotly
     # =====================================================
+
     fig = px.line(
         df,
-        x="measured_at",
-        y="value",
+        x="bucket_at",
+        y="avg_value",
         color="type",
         title="Mesures de la ruche",
     )
