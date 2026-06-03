@@ -22,6 +22,50 @@ services:
     ports:
       - "8050:8050"
 
+  # Nouveau service aggregator
+  aggregator:
+    image: ghcr.io/tgalton/beibeilles-api:latest
+
+    restart: always
+
+    environment:
+      DATABASE_URL: postgresql+psycopg://beibeilles:beibeilles@timescaledb:5432/beibeilles
+
+    depends_on:
+      timescaledb:
+        condition: service_healthy
+
+    command: >
+      sh -c "
+        while true;
+        do
+          python scripts/aggregate_measurements_5m.py;
+          sleep 300;
+        done
+      "
+
+  # Nouveau service cleanup
+  cleanup:
+    image: ghcr.io/tgalton/beibeilles-api:latest
+
+    restart: always
+
+    environment:
+      DATABASE_URL: postgresql+psycopg://beibeilles:beibeilles@timescaledb:5432/beibeilles
+
+    depends_on:
+      timescaledb:
+        condition: service_healthy
+
+    command: >
+      sh -c "
+        while true;
+        do
+          python scripts/delete_raw_after_7days.py;
+          sleep 86400;
+        done
+      "
+
   watchtower:
     image: containrrr/watchtower:latest
     container_name: watchtower
