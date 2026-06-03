@@ -1,21 +1,48 @@
+ <!-- Lancement local -->
+
 docker compose \
 -f docker-compose.yml \
 -f docker-compose.dev.yml \
-up --build
+up -d
 
- <!-- Lancement local -->
+ <!-- Arrêter local -->
+
+docker compose \
+-f docker-compose.yml \
+-f docker-compose.dev.yml \
+down
+
+<!-- Reset complet local -->
 
 docker compose \
 -f docker-compose.yml \
 -f docker-compose.dev.yml \
 down -v
 
-<!-- Reset complet local -->
+<!-- Rebuild complet : -->
 
 docker compose \
 -f docker-compose.yml \
--f docker-compose.prod.yml \
-up -d
+-f docker-compose.dev.yml \
+build --no-cache
+
+<!-- Alembic migration -->
+
+cd api
+alembic revision --autogenerate -m "nom migration"
+
+<!-- Appliquer migration -->
+
+alembic upgrade head
+
+<!-- Connexion postgre -->
+
+docker exec -it beibeilles-timescaledb-1 \
+psql -U beibeilles -d beibeilles
+
+<!-- Voir les tables  -->
+
+\dt
 
 <!-- Lancement prod -->
 

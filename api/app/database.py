@@ -27,7 +27,8 @@ from tenacity import wait_fixed
 # En local :
 # Python utilisera le fichier .env
 # =========================================================
-load_dotenv()
+if "DATABASE_URL" not in os.environ:
+    load_dotenv()
 
 
 # =========================================================

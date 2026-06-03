@@ -19,27 +19,9 @@ BASE_DIR = Path(__file__).resolve().parent
 # =========================================================
 # Sélection environnement
 # =========================================================
-ENV = os.getenv(
-    "APP_ENV",
-    "local",
-)
-
-
-# =========================================================
-# Chargement du bon fichier .env
-# =========================================================
-if ENV == "docker":
-
-    load_dotenv(
-        BASE_DIR / ".env.docker",
-    )
-
-else:
-
-    load_dotenv(
-        BASE_DIR / ".env.local",
-    )
-
+if "API_URL" not in os.environ:
+    load_dotenv()
+API_URL = os.environ["API_URL"]
 
 # =========================================================
 # URL API FastAPI
