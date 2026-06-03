@@ -56,7 +56,7 @@ def ingest_measurements(
 
 
 @router.get(
-    "/{measurement_id}",
+    "/id/{measurement_id}",
     response_model=MeasurementRead,
 )
 def get_measurement_raw(
