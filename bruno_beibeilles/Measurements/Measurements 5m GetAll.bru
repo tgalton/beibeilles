@@ -1,0 +1,23 @@
+meta {
+  name: Measurements 5m GetAll
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{host}}/measurements/5m
+  auth: inherit
+}
+
+params:query {
+  measurement_type: weight
+  hive_level_id:
+  sensor_device_id:
+  start_at:
+  end_at:
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

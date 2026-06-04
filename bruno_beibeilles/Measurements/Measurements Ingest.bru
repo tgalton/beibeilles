@@ -1,11 +1,11 @@
 meta {
-  name: Measurements create
+  name: Measurements Ingest
   type: http
-  seq: 1
+  seq: 4
 }
 
 post {
-  url: {{host}}/measurements/raw/ingest
+  url: {{host}}/measurements/ingest
   body: json
   auth: inherit
 }
@@ -16,8 +16,9 @@ body:json {
     "measurements": [
       {
         "type": "weight",
-        "value": 12.3,
-        "hive_level_id": 1
+        "value": 42.5,
+        "hive_level_id": 1,
+        "measured_at": "2026-06-05T12:00:00Z"
       }
     ]
   }

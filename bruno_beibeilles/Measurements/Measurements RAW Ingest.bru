@@ -1,0 +1,30 @@
+meta {
+  name: Measurements RAW Ingest
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{host}}/measurements/raw/ingest
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "device_serial": "ESP32-RUCHE-001",
+    "measurements": [
+      {
+        "type": "weight",
+        "value": 42.5,
+        "hive_level_id": 1,
+        "measured_at": "2026-06-05T12:00:00Z"
+      }
+    ]
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
