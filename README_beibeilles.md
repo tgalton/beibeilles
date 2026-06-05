@@ -1,3 +1,7 @@
+su - tom <!-- Permet de récupérer la session et le bon directory sur le serveur de l'appli -->
+
+<!-- Car c'est un docker rootless -->
+
  <!-- Lancement local -->
 
 docker compose \
