@@ -1,72 +1,104 @@
-su - tom <!-- Permet de récupérer la session et le bon directory sur le serveur de l'appli -->
+**Permet de récupérer la session et le bon directory sur le serveur de l'appli**
+
+```
+su - tom
+```
 
 <!-- Car c'est un docker rootless -->
 
- <!-- Lancement local -->
+**Lancement local**
 
+```bash
 docker compose \
 -f docker-compose.yml \
 -f docker-compose.dev.yml \
 up -d
+```
 
- <!-- Arrêter local -->
+**Arrêter local**
 
+```bash
 docker compose \
 -f docker-compose.yml \
 -f docker-compose.dev.yml \
 down
+```
 
-<!-- Reset complet local -->
+**Reset complet local**
 
+```bash
 docker compose \
 -f docker-compose.yml \
 -f docker-compose.dev.yml \
 down -v
+```
 
-<!-- Rebuild complet : -->
+**Rebuild complet :**
 
+```bash
 docker compose \
 -f docker-compose.yml \
 -f docker-compose.dev.yml \
 build --no-cache
+```
 
-<!-- Alembic migration -->
+**Alembic migration**
 
+```bash
 cd api
 alembic revision --autogenerate -m "nom migration"
+```
 
-<!-- Appliquer migration -->
+**Appliquer migration**
 
+```bash
 alembic upgrade head
+```
 
-<!-- Connexion postgre -->
+**Connexion postgre sur serveur**
 
+````bash
 docker exec -it beibeilles-timescaledb-1 \
-psql -U beibeilles -d beibeilles
+psql -U beibeilles -d beibeilles```
 
-<!-- Voir les tables  -->
+**Voir les tables **
 
+```bash
 \dt
+````
 
-<!-- Lancement prod -->
+**Connexion postgre sur dbeaver**
+Création d'un tunnel ssh local (la base n'est pas exposée)
 
+```bash
+ssh -L 5432:localhost:5432 tom@79.137.34.118
+```
+
+**Lancement prod**
+
+```bash
 docker compose -f docker-compose.yml -f docker-compose.dev.yml down -v <!-- Fermeture des contener -->
 
 <!-- Nettoyage de tout les docker -> docker system prune -a --volumes -f -->
 <!-- Suppresion manuelle contener de la base : docker volume rm beibeilles_timescaledb_data -->
 <!-- Création d'arbre : find . -print | sed -e 's;[^/]*/;|   ;g' -->
+```
 
-cmd //c "tree /F /A > arborescence.txt"<!-- Création de fichier d'arborescence :-->
+**Création de fichier d'arborescence :**
+
+```bash
+cmd //c "tree /F /A > arborescence.txt"
+```
 
 <!-- Mdp temporaire bdd : 4b90cedb66834ff8ab4a1d38ff0d5d15 -->
 
-uvicorn app.main:app --reload <!-- Lancer pour tester le back en local avant de pousser -->
-cd dash_app python app.py <!-- Lancer pour tester le front en local avant de pousser -->
+Adresse pour le json de l'api : http://79.137.34.118:8000/openapi.json
 
-<!--donne le json de l'api --> http://79.137.34.118:8000/openapi.json
-<!-- Supprime sqlite locale --> rm beehive.db
+**Voir logs watchtower sur server**
 
-<!-- Voir logs watchtower sur server --> docker logs watchtower -f
+```bash
+docker logs watchtower -f
+```
 
 <!-- Tout lancer en docker local--> docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 <!-- Tout down en docker local--> docker compose -f docker-compose.yml -f docker-compose.dev.yml down -v
@@ -74,6 +106,44 @@ cd dash_app python app.py <!-- Lancer pour tester le front en local avant de pou
 <!-- Générer migration des données --> alembic revision --autogenerate -m "..."
 <!-- Aller sur le postgre de la bdd depuis server --> docker exec -it beibeilles-timescaledb-1 psql -U beibeilles -d beibeilles
 <!-- Pour voir les tables ensuite --> \dt
+
+**INSTALLER REQUIREMENT EN LOCAL**
+
+Depuis les versions récentes d'Ubuntu/Debian, Python est protégé par le mécanisme PEP 668. Il empêche d'installer des paquets avec pip directement dans le Python système.
+A faire depuis le dossier Api :
+
+```bash
+sudo apt update
+sudo apt install python3-venv python3-full
+```
+
+<!-- puis toujours dans le dossier api-->
+
+```bash
+cd ~/Workspace/beibeilles/api
+
+python3 -m venv .venv
+
+source .venv/bin/activate
+
+# Mettre à jour pip
+pip install --upgrade pip
+# Installer les requirements
+pip install -r requirements.txt
+```
+
+**Lancer les tests**
+
+```bash
+source .venv/bin/activate
+pytest
+```
+
+**Voir les crédentials bdd du server**
+
+```bash
+docker inspect beibeilles-timescaledb-1 | grep POSTGRES
+```
 
 # Plateforme de supervision apicole connectée
 

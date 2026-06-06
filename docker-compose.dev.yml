@@ -81,7 +81,9 @@ services:
       sh -c "
         while true;
         do
+          echo 'Aggregation started';
           python scripts/aggregate_measurements_5m.py;
+          echo 'Aggregation finished';
           sleep 300;
         done
       "
