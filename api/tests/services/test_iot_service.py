@@ -190,3 +190,495 @@
 # critiques de l'application, avec le service
 # d'agrégation.
 # =========================================================
+
+from datetime import UTC
+from datetime import datetime
+from unittest.mock import Mock
+from unittest.mock import patch
+
+from app.models.measurement_raw import MeasurementRaw
+from app.models.sensor_device import SensorDevice
+
+from app.schemas.iot_ingest import IoTIngest
+from app.schemas.iot_ingest import IoTMeasurement
+
+from app.services import iot_service
+
+
+# =========================================================
+# Helpers
+# =========================================================
+
+def fake_device() -> SensorDevice:
+
+    device = SensorDevice()
+
+    device.id = 42
+    device.name = "ESP32 Test"
+    device.serial_number = "ABC123"
+
+    return device
+
+
+def create_payload(
+    measurements: list[IoTMeasurement],
+) -> IoTIngest:
+
+    return IoTIngest(
+        device_serial="ABC123",
+        measurements=measurements,
+    )
+
+
+# =========================================================
+# Vérifie que le service recherche/crée le device
+# =========================================================
+@patch(
+    "app.services.iot_service.sensor_device_repository.get_or_create_by_serial",
+)
+@patch(
+    "app.services.iot_service.measurement_raw_repository.create_many",
+)
+def test_ingest_measurements_calls_get_or_create(
+    mock_create_many: Mock,
+    mock_get_device: Mock,
+) -> None:
+
+    mock_get_device.return_value = fake_device()
+
+    payload = create_payload(
+        [
+            IoTMeasurement(
+                type="temperature",
+                value=21.5,
+            ),
+        ],
+    )
+
+    iot_service.ingest_measurements(
+        db=Mock(),
+        payload=payload,
+    )
+
+    mock_get_device.assert_called_once()
+
+
+# =========================================================
+# Vérifie le serial transmis
+# =========================================================
+@patch(
+    "app.services.iot_service.sensor_device_repository.get_or_create_by_serial",
+)
+@patch(
+    "app.services.iot_service.measurement_raw_repository.create_many",
+)
+def test_ingest_measurements_passes_serial(
+    mock_create_many: Mock,
+    mock_get_device: Mock,
+) -> None:
+
+    mock_get_device.return_value = fake_device()
+
+    payload = create_payload(
+        [
+            IoTMeasurement(
+                type="temperature",
+                value=21.5,
+            ),
+        ],
+    )
+
+    iot_service.ingest_measurements(
+        db=Mock(),
+        payload=payload,
+    )
+
+    assert (
+        mock_get_device.call_args.kwargs["serial_number"]
+        == "ABC123"
+    )
+
+
+# =========================================================
+# Vérifie création d'une mesure
+# =========================================================
+@patch(
+    "app.services.iot_service.sensor_device_repository.get_or_create_by_serial",
+)
+@patch(
+    "app.services.iot_service.measurement_raw_repository.create_many",
+)
+def test_ingest_measurements_creates_measurement(
+    mock_create_many: Mock,
+    mock_get_device: Mock,
+) -> None:
+
+    mock_get_device.return_value = fake_device()
+
+    payload = create_payload(
+        [
+            IoTMeasurement(
+                type="temperature",
+                value=22.1,
+            ),
+        ],
+    )
+
+    iot_service.ingest_measurements(
+        db=Mock(),
+        payload=payload,
+    )
+
+    measurements = (
+        mock_create_many.call_args.kwargs["measurements"]
+    )
+
+    assert len(measurements) == 1
+
+    assert isinstance(
+        measurements[0],
+        MeasurementRaw,
+    )
+
+
+# =========================================================
+# Vérifie plusieurs mesures
+# =========================================================
+@patch(
+    "app.services.iot_service.sensor_device_repository.get_or_create_by_serial",
+)
+@patch(
+    "app.services.iot_service.measurement_raw_repository.create_many",
+)
+def test_ingest_measurements_multiple_measurements(
+    mock_create_many: Mock,
+    mock_get_device: Mock,
+) -> None:
+
+    mock_get_device.return_value = fake_device()
+
+    payload = create_payload(
+        [
+            IoTMeasurement(
+                type="temperature",
+                value=20,
+            ),
+            IoTMeasurement(
+                type="humidity",
+                value=70,
+            ),
+            IoTMeasurement(
+                type="co2",
+                value=450,
+            ),
+        ],
+    )
+
+    iot_service.ingest_measurements(
+        db=Mock(),
+        payload=payload,
+    )
+
+    measurements = (
+        mock_create_many.call_args.kwargs["measurements"]
+    )
+
+    assert len(measurements) == 3
+
+
+# =========================================================
+# Vérifie propagation sensor_device_id
+# =========================================================
+@patch(
+    "app.services.iot_service.sensor_device_repository.get_or_create_by_serial",
+)
+@patch(
+    "app.services.iot_service.measurement_raw_repository.create_many",
+)
+def test_ingest_measurements_sets_sensor_device_id(
+    mock_create_many: Mock,
+    mock_get_device: Mock,
+) -> None:
+
+    mock_get_device.return_value = fake_device()
+
+    payload = create_payload(
+        [
+            IoTMeasurement(
+                type="temperature",
+                value=21,
+            ),
+        ],
+    )
+
+    iot_service.ingest_measurements(
+        db=Mock(),
+        payload=payload,
+    )
+
+    measurement = (
+        mock_create_many.call_args.kwargs["measurements"][0]
+    )
+
+    assert measurement.sensor_device_id == 42
+
+
+# =========================================================
+# Vérifie propagation hive_level_id
+# =========================================================
+@patch(
+    "app.services.iot_service.sensor_device_repository.get_or_create_by_serial",
+)
+@patch(
+    "app.services.iot_service.measurement_raw_repository.create_many",
+)
+def test_ingest_measurements_sets_hive_level(
+    mock_create_many: Mock,
+    mock_get_device: Mock,
+) -> None:
+
+    mock_get_device.return_value = fake_device()
+
+    payload = create_payload(
+        [
+            IoTMeasurement(
+                type="temperature",
+                value=21,
+                hive_level_id=5,
+            ),
+        ],
+    )
+
+    iot_service.ingest_measurements(
+        db=Mock(),
+        payload=payload,
+    )
+
+    measurement = (
+        mock_create_many.call_args.kwargs["measurements"][0]
+    )
+
+    assert measurement.hive_level_id == 5
+
+
+# =========================================================
+# Vérifie conservation timestamp
+# =========================================================
+@patch(
+    "app.services.iot_service.sensor_device_repository.get_or_create_by_serial",
+)
+@patch(
+    "app.services.iot_service.measurement_raw_repository.create_many",
+)
+def test_ingest_measurements_preserves_timestamp(
+    mock_create_many: Mock,
+    mock_get_device: Mock,
+) -> None:
+
+    timestamp = datetime(
+        2026,
+        1,
+        1,
+        12,
+        0,
+        tzinfo=UTC,
+    )
+
+    mock_get_device.return_value = fake_device()
+
+    payload = create_payload(
+        [
+            IoTMeasurement(
+                type="temperature",
+                value=21,
+                measured_at=timestamp,
+            ),
+        ],
+    )
+
+    iot_service.ingest_measurements(
+        db=Mock(),
+        payload=payload,
+    )
+
+    measurement = (
+        mock_create_many.call_args.kwargs["measurements"][0]
+    )
+
+    assert measurement.measured_at == timestamp
+
+
+# =========================================================
+# Vérifie type conservé
+# =========================================================
+@patch(
+    "app.services.iot_service.sensor_device_repository.get_or_create_by_serial",
+)
+@patch(
+    "app.services.iot_service.measurement_raw_repository.create_many",
+)
+def test_ingest_measurements_preserves_type(
+    mock_create_many: Mock,
+    mock_get_device: Mock,
+) -> None:
+
+    mock_get_device.return_value = fake_device()
+
+    payload = create_payload(
+        [
+            IoTMeasurement(
+                type="weight",
+                value=38.7,
+            ),
+        ],
+    )
+
+    iot_service.ingest_measurements(
+        db=Mock(),
+        payload=payload,
+    )
+
+    measurement = (
+        mock_create_many.call_args.kwargs["measurements"][0]
+    )
+
+    assert measurement.type == "weight"
+
+
+# =========================================================
+# Vérifie valeur conservée
+# =========================================================
+@patch(
+    "app.services.iot_service.sensor_device_repository.get_or_create_by_serial",
+)
+@patch(
+    "app.services.iot_service.measurement_raw_repository.create_many",
+)
+def test_ingest_measurements_preserves_value(
+    mock_create_many: Mock,
+    mock_get_device: Mock,
+) -> None:
+
+    mock_get_device.return_value = fake_device()
+
+    payload = create_payload(
+        [
+            IoTMeasurement(
+                type="weight",
+                value=38.7,
+            ),
+        ],
+    )
+
+    iot_service.ingest_measurements(
+        db=Mock(),
+        payload=payload,
+    )
+
+    measurement = (
+        mock_create_many.call_args.kwargs["measurements"][0]
+    )
+
+    assert measurement.value == 38.7
+
+
+# =========================================================
+# Vérifie appel create_many
+# =========================================================
+@patch(
+    "app.services.iot_service.sensor_device_repository.get_or_create_by_serial",
+)
+@patch(
+    "app.services.iot_service.measurement_raw_repository.create_many",
+)
+def test_ingest_measurements_calls_create_many(
+    mock_create_many: Mock,
+    mock_get_device: Mock,
+) -> None:
+
+    mock_get_device.return_value = fake_device()
+
+    payload = create_payload(
+        [
+            IoTMeasurement(
+                type="temperature",
+                value=20,
+            ),
+        ],
+    )
+
+    iot_service.ingest_measurements(
+        db=Mock(),
+        payload=payload,
+    )
+
+    mock_create_many.assert_called_once()
+
+
+# =========================================================
+# Vérifie retour repository
+# =========================================================
+@patch(
+    "app.services.iot_service.sensor_device_repository.get_or_create_by_serial",
+)
+@patch(
+    "app.services.iot_service.measurement_raw_repository.create_many",
+)
+def test_ingest_measurements_returns_repository_result(
+    mock_create_many: Mock,
+    mock_get_device: Mock,
+) -> None:
+
+    expected = [
+        MeasurementRaw(),
+    ]
+
+    mock_get_device.return_value = fake_device()
+
+    mock_create_many.return_value = expected
+
+    payload = create_payload(
+        [
+            IoTMeasurement(
+                type="temperature",
+                value=20,
+            ),
+        ],
+    )
+
+    result = iot_service.ingest_measurements(
+        db=Mock(),
+        payload=payload,
+    )
+
+    assert result == expected
+
+
+# =========================================================
+# Cas limite : payload vide
+# =========================================================
+@patch(
+    "app.services.iot_service.sensor_device_repository.get_or_create_by_serial",
+)
+@patch(
+    "app.services.iot_service.measurement_raw_repository.create_many",
+)
+def test_ingest_measurements_empty_payload(
+    mock_create_many: Mock,
+    mock_get_device: Mock,
+) -> None:
+
+    mock_get_device.return_value = fake_device()
+
+    payload = create_payload([])
+
+    iot_service.ingest_measurements(
+        db=Mock(),
+        payload=payload,
+    )
+
+    measurements = (
+        mock_create_many.call_args.kwargs["measurements"]
+    )
+
+    assert measurements == []

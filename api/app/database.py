@@ -43,13 +43,16 @@ if "DATABASE_URL" not in os.environ:
 # - migrations cassées
 # - bugs impossibles à reproduire
 # =========================================================
-DATABASE_URL: str | None = os.getenv(
+_database_url = os.getenv(
     "DATABASE_URL",
 )
-if DATABASE_URL is None:
+
+if _database_url is None:
     raise RuntimeError(
         "DATABASE_URL environment variable is required",
     )
+
+DATABASE_URL: str = _database_url
 
 # =========================================================
 # Base SQLAlchemy
