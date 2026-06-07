@@ -3,7 +3,6 @@ from unittest.mock import Mock
 from unittest.mock import patch
 from fastapi.testclient import TestClient
 from datetime import UTC
-from datetime import datetime
 
 from app.main import app
 
