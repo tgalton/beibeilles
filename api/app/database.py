@@ -43,7 +43,13 @@ if "DATABASE_URL" not in os.environ:
 # - migrations cassées
 # - bugs impossibles à reproduire
 # =========================================================
-DATABASE_URL: str = os.environ["DATABASE_URL"]
+DATABASE_URL: str | None = os.getenv(
+    "DATABASE_URL",
+)
+if DATABASE_URL is None:
+    raise RuntimeError(
+        "DATABASE_URL environment variable is required",
+    )
 
 # =========================================================
 # Base SQLAlchemy
@@ -121,12 +127,6 @@ def wait_for_db(
         print("Database connection established.")
 
         return
-
-
-# =========================================================
-# Attente disponibilité DB
-# =========================================================
-wait_for_db(engine)
 
 
 # =========================================================

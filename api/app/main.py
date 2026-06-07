@@ -12,12 +12,16 @@ from app.routers.measurement_raw import (
 from app.routers.measurement_5m import (
     router as measurement_5m_router,
 )
+from app.database import engine
+from app.database import wait_for_db
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
 
     print("MAIN.PY LOADED")
 
+    # WAIT FOR DB placé ici pour éviter de casser les tests py s'il est dans database (bloque mock)
+    wait_for_db(engine)
     # =====================================================
     # Création automatique des tables SQLAlchemy
     # =====================================================

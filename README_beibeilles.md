@@ -139,6 +139,18 @@ source .venv/bin/activate
 pytest
 ```
 
+**Voir la couverture de test**
+
+```bash
+pytest tests/routers/test_measurement_raw_router.py -v
+```
+
+**Lancer les tests d'un seul fichier**
+
+```bash
+pytest tests/routers/test_measurement_raw.py -v
+```
+
 **Voir les crédentials bdd du server**
 
 ```bash

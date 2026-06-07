@@ -9,3 +9,8 @@ psycopg[binary]
 ruff
 mypy
 alembic
+# tests
+pytest
+pytest-cov
+# tests fast api
+httpx

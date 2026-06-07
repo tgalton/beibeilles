@@ -66,6 +66,20 @@ jobs:
           mypy app
 
       # =====================================================
+      # Tests Pytest
+      # =====================================================
+      - name: Run tests
+        env:
+          DATABASE_URL: postgresql+psycopg://beibeilles:beibeilles@localhost:5432/beibeilles
+          TESTING: "1"
+        run: |
+          cd api
+          pytest \
+            --cov=app \
+            --cov-report=term-missing \
+            --cov-fail-under=70
+
+      # =====================================================
       # Vérifie que FastAPI démarre correctement
       # =====================================================
       - name: Validate FastAPI startup
