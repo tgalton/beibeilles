@@ -2,7 +2,6 @@ from fastapi import HTTPException
 from unittest.mock import Mock
 from unittest.mock import patch
 from fastapi.testclient import TestClient
-from datetime import UTC
 
 from app.main import app
 
