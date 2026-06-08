@@ -55,3 +55,18 @@ class HiveLevel(Base):
         foreign_keys=[upper_level_id],
         post_update=True,
     )
+
+    weight_baselines = relationship(
+        "WeightBaseline",
+        back_populates="hive_level",
+    )
+
+    weight_calibrations = relationship(
+        "WeightCalibration",
+        back_populates="hive_level",
+    )
+
+    weight_reference_events = relationship(
+        "WeightReferenceEvent",
+        back_populates="hive_level",
+    )
