@@ -1,0 +1,113 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - "feat/**"
+
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: timescale/timescaledb:latest-pg16
+
+        env:
+          POSTGRES_USER: beibeilles
+          POSTGRES_PASSWORD: beibeilles
+          POSTGRES_DB: beibeilles
+
+        ports:
+          - 5432:5432
+
+        options: >-
+          --health-cmd "pg_isready -U beibeilles -d beibeilles"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # =====================================================
+      # Installation dépendances API
+      # =====================================================
+      - name: Install API dependencies
+        run: |
+          cd api
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # =====================================================
+      # Ruff
+      # =====================================================
+      - name: Ruff check
+        run: |
+          cd api
+          ruff check .
+
+      # =====================================================
+      # MyPy
+      # =====================================================
+      - name: MyPy check
+        run: |
+          cd api
+          mypy app
+
+      # =====================================================
+      # Tests unitaires
+      # =====================================================
+      - name: Run tests
+        env:
+          DATABASE_URL: postgresql+psycopg://beibeilles:beibeilles@localhost:5432/beibeilles
+          TESTING: "1"
+        run: |
+          cd api
+
+          pytest \
+            --cov=app \
+            --cov-report=term-missing \
+            --cov-fail-under=70
+
+      # =====================================================
+      # Vérifie que FastAPI démarre
+      # =====================================================
+      - name: Validate FastAPI startup
+        env:
+          DATABASE_URL: postgresql+psycopg://beibeilles:beibeilles@localhost:5432/beibeilles
+        run: |
+          cd api
+          python -c "from app.main import app"
+
+      # =====================================================
+      # Vérifie les migrations Alembic
+      # =====================================================
+      - name: Validate Alembic migrations
+        env:
+          DATABASE_URL: postgresql+psycopg://beibeilles:beibeilles@localhost:5432/beibeilles
+          PYTHONPATH: .
+        run: |
+          cd api
+          alembic upgrade head
+
+      # =====================================================
+      # Vérifie le script d'agrégation
+      # =====================================================
+      - name: Validate aggregation script
+        env:
+          DATABASE_URL: postgresql+psycopg://beibeilles:beibeilles@localhost:5432/beibeilles
+          PYTHONPATH: .
+        run: |
+          cd api
+          python scripts/aggregate_measurements_5m.py
