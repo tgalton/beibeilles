@@ -52,10 +52,16 @@ class WeightCalibration(Base):
     __tablename__ = "weight_calibrations"
 
     __table_args__ = (
+        # Les dates de validé ont un ordre
         CheckConstraint(
             "valid_to IS NULL OR valid_to > valid_from",
             name="ck_weight_calibration_dates",
         ),
+        # L'event de calibration passe toujours par un ajout de masse
+        CheckConstraint(
+            "gain > 0",
+            name="ck_weight_calibration_gain_positive",
+        )
     )
 
     id: Mapped[int] = mapped_column(
@@ -158,6 +164,28 @@ class WeightCalibration(Base):
         nullable=True,
     )
 
+    # =====================================================
+    # Event ayant conduit à cette calibration.
+    #
+    # Exemple :
+    #
+    # calibration calculée à partir
+    # d'un poids étalon.
+    #
+    # Permet la traçabilité complète.
+    #
+    # NULL :
+    #
+    # calibration manuelle
+    # ou ancienne calibration.
+    # =====================================================
+    reference_event_id: Mapped[int | None] = mapped_column(
+        ForeignKey(
+            "weight_reference_events.id",
+        ),
+        nullable=True,
+    )
+
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
         default=lambda: datetime.now(UTC),
@@ -169,7 +197,6 @@ class WeightCalibration(Base):
         back_populates="weight_calibrations",
     )
 
-    CheckConstraint(
-        "valid_to IS NULL OR valid_to > valid_from",
-        name="ck_weight_calibration_dates",
+    reference_event = relationship(
+        "WeightReferenceEvent",
     )
