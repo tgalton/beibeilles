@@ -91,3 +91,50 @@ def get_current_calibration(
             hive_level_id=hive_level_id,
         )
     )
+
+def apply_calibration(
+    db: Session,
+    hive_level_id: int,
+    raw_weight: float,
+    measured_at: datetime,
+) -> float:
+    """
+    =========================================================
+    Applique la calibration valide
+    à la date de mesure.
+
+    IMPORTANT :
+
+    Les données brutes ne sont jamais
+    modifiées.
+
+    Cette méthode effectue uniquement
+    le calcul métier.
+
+    Formule :
+
+    poids_corrige =
+    (poids_brut - offset)
+    × gain
+    =========================================================
+    """
+
+    calibration = (
+        weight_calibration_repository
+        .get_for_datetime(
+            db=db,
+            hive_level_id=hive_level_id,
+            measured_at=measured_at,
+        )
+    )
+
+    if calibration is None:
+        return raw_weight
+
+    return (
+        (
+            raw_weight
+            - calibration.offset_kg
+        )
+        * calibration.gain
+    )
