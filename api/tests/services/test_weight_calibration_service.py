@@ -62,16 +62,9 @@ from app.services import weight_calibration_service
 @patch(
     "app.services.weight_calibration_service.weight_calibration_repository"
 )
-def test_get_active_calibration_found(
+def test_get_current_calibration_found(
     mock_repository,
 ):
-    """
-    =====================================================
-    Vérifie qu'on retourne correctement
-    la calibration active.
-    =====================================================
-    """
-
     calibration = WeightCalibration(
         id=1,
         hive_level_id=1,
@@ -82,13 +75,13 @@ def test_get_active_calibration_found(
         source=CalibrationSource.AUTO_DRIFT,
     )
 
-    mock_repository.get_active.return_value = calibration
+    mock_repository.get_current_for_hive_level.return_value = calibration
 
     db = Mock()
 
     result = (
         weight_calibration_service
-        .get_active_calibration(
+        .get_current_calibration(
             db=db,
             hive_level_id=1,
         )
@@ -101,7 +94,7 @@ def test_get_active_calibration_found(
 @patch(
     "app.services.weight_calibration_service.weight_calibration_repository"
 )
-def test_get_active_calibration_none(
+def test_get_current_calibration_none(
     mock_repository,
 ):
     """
@@ -111,13 +104,13 @@ def test_get_active_calibration_none(
     =====================================================
     """
 
-    mock_repository.get_active.return_value = None
+    mock_repository.get_current_for_hive_level.return_value = None
 
     db = Mock()
 
     result = (
         weight_calibration_service
-        .get_active_calibration(
+        .get_current_calibration(
             db=db,
             hive_level_id=1,
         )
@@ -139,7 +132,7 @@ def test_apply_calibration_without_calibration(
     =====================================================
     """
 
-    mock_repository.get_active.return_value = None
+    mock_repository.get_for_datetime.return_value = None
 
     db = Mock()
 
@@ -149,6 +142,7 @@ def test_apply_calibration_without_calibration(
             db=db,
             hive_level_id=1,
             raw_weight=50.0,
+            measured_at=datetime.now(UTC),
         )
     )
 
@@ -180,7 +174,7 @@ def test_apply_calibration_offset_only(
         source=CalibrationSource.AUTO_DRIFT,
     )
 
-    mock_repository.get_active.return_value = calibration
+    mock_repository.get_for_datetime.return_value = calibration
 
     db = Mock()
 
@@ -190,6 +184,7 @@ def test_apply_calibration_offset_only(
             db=db,
             hive_level_id=1,
             raw_weight=50.0,
+            measured_at=datetime.now(UTC),
         )
     )
 
@@ -220,7 +215,7 @@ def test_apply_calibration_offset_and_gain(
         source=CalibrationSource.REFERENCE_WEIGHT,
     )
 
-    mock_repository.get_active.return_value = calibration
+    mock_repository.get_for_datetime.return_value = calibration
 
     db = Mock()
 
@@ -230,6 +225,7 @@ def test_apply_calibration_offset_and_gain(
             db=db,
             hive_level_id=1,
             raw_weight=50.0,
+            measured_at=datetime.now(UTC),
         )
     )
 
@@ -260,7 +256,7 @@ def test_apply_calibration_gain_less_than_one(
         source=CalibrationSource.REFERENCE_WEIGHT,
     )
 
-    mock_repository.get_active.return_value = calibration
+    mock_repository.get_for_datetime.return_value = calibration
 
     db = Mock()
 
@@ -270,6 +266,7 @@ def test_apply_calibration_gain_less_than_one(
             db=db,
             hive_level_id=1,
             raw_weight=100.0,
+            measured_at=datetime.now(UTC),
         )
     )
 

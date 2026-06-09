@@ -49,6 +49,15 @@ cd api
 alembic revision --autogenerate -m "nom migration"
 ```
 
+**Si on a une erreur "Target database is not up to date."**
+
+```bash
+# C'est une différence entre current et head en version
+alembic current
+alembic heads
+alembic upgrade head
+```
+
 **Appliquer migration**
 
 ```bash
