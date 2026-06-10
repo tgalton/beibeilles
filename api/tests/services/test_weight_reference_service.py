@@ -1,5 +1,3 @@
-from datetime import UTC
-from datetime import datetime
 from unittest.mock import Mock
 from unittest.mock import patch
 
