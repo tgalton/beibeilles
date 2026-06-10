@@ -138,3 +138,117 @@ def apply_calibration(
         )
         * calibration.gain
     )
+
+
+def create_calibration_from_reference_event(
+    db: Session,
+    reference_event: WeightReferenceEvent,
+) -> WeightCalibration:
+    """
+    =====================================================
+    Génère une calibration à partir d'un
+    WeightReferenceEvent.
+    =====================================================
+
+    Exemple :
+
+    poids attendu :
+        1.000 kg
+
+    poids observé :
+        0.940 kg
+
+    gain calculé :
+        1.063829
+
+    Processus :
+
+    1) fermeture calibration active
+
+    2) calcul du gain
+
+    3) création nouvelle calibration
+
+    IMPORTANT :
+
+    Cette opération ne modifie pas
+    l'offset.
+
+    Seul le gain est recalculé.
+    =====================================================
+    """
+
+    if not (
+        weight_reference_service
+        .is_reference_event_valid(
+            expected_delta_kg=(
+                reference_event.expected_delta_kg
+            ),
+            measured_delta_kg=(
+                reference_event.measured_delta_kg
+            ),
+        )
+    ):
+        raise ValueError(
+            "Invalid reference event"
+        )
+
+    gain = (
+        weight_reference_service
+        .compute_gain_from_reference(
+            expected_delta_kg=(
+                reference_event.expected_delta_kg
+            ),
+            measured_delta_kg=(
+                reference_event.measured_delta_kg
+            ),
+        )
+    )
+
+    now = datetime.now(UTC)
+
+    # =================================================
+    # Ferme calibration actuelle
+    # =================================================
+
+    weight_calibration_repository\
+        .close_current_calibration(
+            db=db,
+            hive_level_id=(
+                reference_event.hive_level_id
+            ),
+            closed_at=now,
+        )
+
+    # =================================================
+    # Nouvelle calibration
+    # =================================================
+
+    calibration = WeightCalibration(
+        hive_level_id=(
+            reference_event.hive_level_id
+        ),
+        valid_from=now,
+        valid_to=None,
+
+        # -----------------------------------------
+        # Le poids étalon permet de recalculer
+        # le gain mais pas le zéro.
+        # -----------------------------------------
+        offset_kg=0.0,
+
+        gain=gain,
+
+        source=(
+            CalibrationSource
+            .REFERENCE_WEIGHT
+        ),
+    )
+
+    return (
+        weight_calibration_repository
+        .create(
+            db=db,
+            calibration=calibration,
+        )
+    )
