@@ -3,6 +3,8 @@ from datetime import datetime
 
 from sqlalchemy.orm import Session
 
+from app.models.weight_reference_event import WeightReferenceEvent
+from app.services import weight_reference_service
 from app.enums.calibration_source import (
     CalibrationSource,
 )
@@ -250,5 +252,26 @@ def create_calibration_from_reference_event(
         .create(
             db=db,
             calibration=calibration,
+        )
+    )
+
+def get_calibration_for_datetime(
+    db: Session,
+    hive_level_id: int,
+    measured_at: datetime,
+):
+    """
+    =====================================================
+    Retourne la calibration valide
+    pour une date donnée.
+    =====================================================
+    """
+
+    return (
+        weight_calibration_repository
+        .get_for_datetime(
+            db=db,
+            hive_level_id=hive_level_id,
+            measured_at=measured_at,
         )
     )

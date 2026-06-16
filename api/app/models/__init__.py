@@ -6,6 +6,7 @@ from app.models.sensor_device import SensorDevice
 from app.models.weight_baseline import WeightBaseline
 from app.models.weight_calibration import WeightCalibration
 from app.models.weight_reference_event import WeightReferenceEvent
+from app.models.measurement_corrected import MeasurementCorrected
 
 __all__ = [
     "Hive",
@@ -16,4 +17,5 @@ __all__ = [
     "WeightBaseline",
     "WeightCalibration",
     "WeightReferenceEvent",
+    "MeasurementCorrected",
 ]
