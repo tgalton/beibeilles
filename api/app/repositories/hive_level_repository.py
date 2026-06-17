@@ -26,8 +26,4 @@ def get_by_id(
     db: Session,
     level_id: int,
 ) -> HiveLevel | None:
-    return (
-        db.query(HiveLevel)
-        .filter(HiveLevel.id == level_id)
-        .first()
-    )
+    return db.query(HiveLevel).filter(HiveLevel.id == level_id).first()

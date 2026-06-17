@@ -15,13 +15,11 @@ def main() -> None:
     db = SessionLocal()
 
     try:
-
         aggregate_measurements_5m(
             db=db,
         )
 
     finally:
-
         db.close()
 
 

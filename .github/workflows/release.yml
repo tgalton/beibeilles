@@ -1,0 +1,61 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    permissions:
+      packages: write
+      contents: read
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # =====================================================
+      # Login GHCR
+      # =====================================================
+      - name: Login to GHCR
+        run: |
+          echo "${{ secrets.GHCR_TOKEN }}" \
+          | docker login ghcr.io \
+            -u tgalton \
+            --password-stdin
+
+      # =====================================================
+      # Build API
+      # =====================================================
+      - name: Build API image
+        run: |
+          docker build \
+            -t ghcr.io/tgalton/beibeilles-api:latest \
+            ./api
+
+      # =====================================================
+      # Push API
+      # =====================================================
+      - name: Push API image
+        run: |
+          docker push ghcr.io/tgalton/beibeilles-api:latest
+
+      # =====================================================
+      # Build Dash
+      # =====================================================
+      - name: Build Dash image
+        run: |
+          docker build \
+            -t ghcr.io/tgalton/beibeilles-dash:latest \
+            ./dash_app
+
+      # =====================================================
+      # Push Dash
+      # =====================================================
+      - name: Push Dash image
+        run: |
+          docker push ghcr.io/tgalton/beibeilles-dash:latest

@@ -69,10 +69,7 @@ def test_create_hive_passes_name(
 
     mock_create.assert_called_once()
 
-    assert (
-        mock_create.call_args.kwargs["name"]
-        == "Ruche Alpha"
-    )
+    assert mock_create.call_args.kwargs["name"] == "Ruche Alpha"
 
 
 # =========================================================
@@ -137,7 +134,6 @@ def test_get_hive_by_id_not_found(
     mock_get_by_id.return_value = None
 
     try:
-
         hive_service.get_hive_by_id(
             db=Mock(),
             hive_id=999,
@@ -146,7 +142,6 @@ def test_get_hive_by_id_not_found(
         assert False
 
     except HTTPException as exc:
-
         assert exc.status_code == 404
         assert exc.detail == "Hive not found"
 

@@ -65,10 +65,7 @@ def test_get_measurements_5m(
 
     assert len(data) == 1
 
-    assert (
-        data[0]["type"]
-        == "temperature"
-    )
+    assert data[0]["type"] == "temperature"
 
 
 # =========================================================
@@ -157,20 +154,11 @@ def test_get_measurements_5m_passes_parameters(
 
     mock_get.assert_called_once()
 
-    assert (
-        mock_get.call_args.kwargs["measurement_type"]
-        == "temperature"
-    )
+    assert mock_get.call_args.kwargs["measurement_type"] == "temperature"
 
-    assert (
-        mock_get.call_args.kwargs["hive_level_id"]
-        == 2
-    )
+    assert mock_get.call_args.kwargs["hive_level_id"] == 2
 
-    assert (
-        mock_get.call_args.kwargs["sensor_device_id"]
-        == 10
-    )
+    assert mock_get.call_args.kwargs["sensor_device_id"] == 10
 
     # =====================================================
     # FastAPI convertit automatiquement
@@ -179,12 +167,6 @@ def test_get_measurements_5m_passes_parameters(
     # On vérifie simplement qu'elles
     # ont bien été transmises.
     # =====================================================
-    assert (
-        mock_get.call_args.kwargs["start_at"]
-        is not None
-    )
+    assert mock_get.call_args.kwargs["start_at"] is not None
 
-    assert (
-        mock_get.call_args.kwargs["end_at"]
-        is not None
-    )
+    assert mock_get.call_args.kwargs["end_at"] is not None

@@ -1,12 +1,12 @@
+from dotenv import load_dotenv
 from logging.config import fileConfig
-
 from sqlalchemy import engine_from_config, pool
 from alembic import context
 import os
-
 from app.database import Base
 from app.models import *  # important pour autogenerate  # noqa: F403
 
+load_dotenv()
 config = context.config
 
 if config.config_file_name is not None:
@@ -62,5 +62,5 @@ if context.is_offline_mode():
     run_migrations_offline()
 else:
     run_migrations_online()
-    
+
 print(Base.metadata.tables.keys())

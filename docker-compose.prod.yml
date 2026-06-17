@@ -69,6 +69,28 @@ services:
         done
       "
 
+  # Nouveau service calibration
+  auto-recalibration:
+    image: ghcr.io/tgalton/beibeilles-api:latest
+
+    restart: always
+
+    environment:
+      DATABASE_URL: postgresql+psycopg://beibeilles:beibeilles@timescaledb:5432/beibeilles
+
+    depends_on:
+      timescaledb:
+        condition: service_healthy
+
+    command: >
+      sh -c "
+        while true;
+        do
+          python scripts/run_auto_recalibration.py;
+          sleep 300;
+        done
+      "
+
   watchtower:
     image: containrrr/watchtower:latest
     container_name: watchtower

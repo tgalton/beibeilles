@@ -209,6 +209,7 @@ from app.services import iot_service
 # Helpers
 # =========================================================
 
+
 def fake_device() -> SensorDevice:
 
     device = SensorDevice()
@@ -293,10 +294,7 @@ def test_ingest_measurements_passes_serial(
         payload=payload,
     )
 
-    assert (
-        mock_get_device.call_args.kwargs["serial_number"]
-        == "ABC123"
-    )
+    assert mock_get_device.call_args.kwargs["serial_number"] == "ABC123"
 
 
 # =========================================================
@@ -329,9 +327,7 @@ def test_ingest_measurements_creates_measurement(
         payload=payload,
     )
 
-    measurements = (
-        mock_create_many.call_args.kwargs["measurements"]
-    )
+    measurements = mock_create_many.call_args.kwargs["measurements"]
 
     assert len(measurements) == 1
 
@@ -379,9 +375,7 @@ def test_ingest_measurements_multiple_measurements(
         payload=payload,
     )
 
-    measurements = (
-        mock_create_many.call_args.kwargs["measurements"]
-    )
+    measurements = mock_create_many.call_args.kwargs["measurements"]
 
     assert len(measurements) == 3
 
@@ -416,9 +410,7 @@ def test_ingest_measurements_sets_sensor_device_id(
         payload=payload,
     )
 
-    measurement = (
-        mock_create_many.call_args.kwargs["measurements"][0]
-    )
+    measurement = mock_create_many.call_args.kwargs["measurements"][0]
 
     assert measurement.sensor_device_id == 42
 
@@ -454,9 +446,7 @@ def test_ingest_measurements_sets_hive_level(
         payload=payload,
     )
 
-    measurement = (
-        mock_create_many.call_args.kwargs["measurements"][0]
-    )
+    measurement = mock_create_many.call_args.kwargs["measurements"][0]
 
     assert measurement.hive_level_id == 5
 
@@ -501,9 +491,7 @@ def test_ingest_measurements_preserves_timestamp(
         payload=payload,
     )
 
-    measurement = (
-        mock_create_many.call_args.kwargs["measurements"][0]
-    )
+    measurement = mock_create_many.call_args.kwargs["measurements"][0]
 
     assert measurement.measured_at == timestamp
 
@@ -538,9 +526,7 @@ def test_ingest_measurements_preserves_type(
         payload=payload,
     )
 
-    measurement = (
-        mock_create_many.call_args.kwargs["measurements"][0]
-    )
+    measurement = mock_create_many.call_args.kwargs["measurements"][0]
 
     assert measurement.type == "weight"
 
@@ -575,9 +561,7 @@ def test_ingest_measurements_preserves_value(
         payload=payload,
     )
 
-    measurement = (
-        mock_create_many.call_args.kwargs["measurements"][0]
-    )
+    measurement = mock_create_many.call_args.kwargs["measurements"][0]
 
     assert measurement.value == 38.7
 
@@ -677,8 +661,6 @@ def test_ingest_measurements_empty_payload(
         payload=payload,
     )
 
-    measurements = (
-        mock_create_many.call_args.kwargs["measurements"]
-    )
+    measurements = mock_create_many.call_args.kwargs["measurements"]
 
     assert measurements == []

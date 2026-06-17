@@ -21,7 +21,6 @@ def get_measurements_5m(
     measurement_type: str | None = None,
     hive_level_id: int | None = None,
     sensor_device_id: int | None = None,
-
     # =====================================================
     # FastAPI parse automatiquement
     # les dates ISO vers datetime.
@@ -30,9 +29,7 @@ def get_measurements_5m(
     # 2026-05-27T12:00:00Z
     # =====================================================
     start_at: datetime | None = None,
-
     end_at: datetime | None = None,
-
     db: Session = Depends(get_db),
 ):
     """

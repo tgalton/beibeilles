@@ -10,6 +10,4 @@ sys.path.insert(
 )
 
 # Pour éviter qu'à l'import app.database pytest retry 20 fois la connexion Postgresql :
-os.environ["DATABASE_URL"] = (
-    "postgresql+psycopg://test:test@localhost:5432/test"
-)
+os.environ["DATABASE_URL"] = "postgresql+psycopg://test:test@localhost:5432/test"

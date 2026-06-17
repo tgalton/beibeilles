@@ -1,17 +1,16 @@
-name: Build and Push Docker Images
+name: CI
 
 on:
   push:
     branches:
       - main
+      - "feat/**"
+
+  pull_request:
 
 jobs:
-  build:
+  tests:
     runs-on: ubuntu-latest
-
-    permissions:
-      packages: write
-      contents: read
 
     services:
       postgres:
@@ -32,6 +31,7 @@ jobs:
           --health-retries 5
 
     steps:
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -50,7 +50,7 @@ jobs:
           pip install -r requirements.txt
 
       # =====================================================
-      # Vérification Ruff
+      # Ruff
       # =====================================================
       - name: Ruff check
         run: |
@@ -58,7 +58,7 @@ jobs:
           ruff check .
 
       # =====================================================
-      # Vérification typing
+      # MyPy
       # =====================================================
       - name: MyPy check
         run: |
@@ -66,7 +66,7 @@ jobs:
           mypy app
 
       # =====================================================
-      # Tests Pytest
+      # Tests unitaires
       # =====================================================
       - name: Run tests
         env:
@@ -74,13 +74,14 @@ jobs:
           TESTING: "1"
         run: |
           cd api
+
           pytest \
             --cov=app \
             --cov-report=term-missing \
             --cov-fail-under=70
 
       # =====================================================
-      # Vérifie que FastAPI démarre correctement
+      # Vérifie que FastAPI démarre
       # =====================================================
       - name: Validate FastAPI startup
         env:
@@ -90,7 +91,7 @@ jobs:
           python -c "from app.main import app"
 
       # =====================================================
-      # Vérifie les migrations
+      # Vérifie les migrations Alembic
       # =====================================================
       - name: Validate Alembic migrations
         env:
@@ -110,25 +111,3 @@ jobs:
         run: |
           cd api
           python scripts/aggregate_measurements_5m.py
-
-      # =====================================================
-      # Login GHCR
-      # =====================================================
-      - name: Login to GHCR
-        run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u tgalton --password-stdin
-
-      # =====================================================
-      # Build + Push API
-      # =====================================================
-      - name: Build API image
-        run: |
-          docker build -t ghcr.io/tgalton/beibeilles-api:latest ./api
-          docker push ghcr.io/tgalton/beibeilles-api:latest
-
-      # =====================================================
-      # Build + Push Dash
-      # =====================================================
-      - name: Build Dash image
-        run: |
-          docker build -t ghcr.io/tgalton/beibeilles-dash:latest ./dash_app
-          docker push ghcr.io/tgalton/beibeilles-dash:latest

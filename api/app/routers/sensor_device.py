@@ -60,7 +60,8 @@ def get_sensor(
         db=db,
         serial_number=serial_number,
     )
-    
+
+
 @router.post(
     "/{serial_number}/associate-hive/{hive_id}",
     response_model=SensorDeviceRead,

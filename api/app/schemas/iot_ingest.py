@@ -16,7 +16,6 @@ MeasurementType = Literal[
 
 
 class IoTMeasurement(BaseModel):
-
     # =====================================================
     # Type de donnée IoT
     # =====================================================
@@ -50,7 +49,6 @@ class IoTMeasurement(BaseModel):
 
 
 class IoTIngest(BaseModel):
-
     device_serial: str
 
     measurements: list[IoTMeasurement]

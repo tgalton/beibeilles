@@ -49,6 +49,15 @@ cd api
 alembic revision --autogenerate -m "nom migration"
 ```
 
+**Si on a une erreur "Target database is not up to date."**
+
+```bash
+# C'est une différence entre current et head en version
+alembic current
+alembic heads
+alembic upgrade head
+```
+
 **Appliquer migration**
 
 ```bash
@@ -155,6 +164,24 @@ pytest tests/routers/test_measurement_raw.py -v
 
 ```bash
 docker inspect beibeilles-timescaledb-1 | grep POSTGRES
+```
+
+**Faire passer le linter ruff**
+
+```bash
+ruff check .
+```
+
+**Faire fixer via le linter ruff**
+
+```bash
+ruff check . --fix
+```
+
+**Faire formater via le linter ruff**
+
+```bash
+ruff format .
 ```
 
 # Plateforme de supervision apicole connectée
@@ -487,3 +514,310 @@ Le projet vise une architecture :
 - orientée séries temporelles ;
 - extensible ;
 - adaptée à un déploiement terrain réel.
+
+# Système d'auto-recalibrage des balances
+
+## Contexte
+
+Les cellules de charge utilisées sur les ruches peuvent dériver avec le temps.
+
+Cette dérive peut être provoquée par :
+
+- les variations de température ;
+- le vieillissement mécanique ;
+- l'humidité ;
+- les contraintes permanentes exercées sur la structure ;
+- les dérives électroniques des amplificateurs HX711.
+
+Lors des essais réalisés sur plusieurs semaines, certaines balances ont présenté des dérives importantes pouvant atteindre plusieurs dizaines de kilogrammes malgré une charge réelle stable.
+
+L'objectif de ce module est de permettre :
+
+- la détection automatique des périodes stables ;
+- l'estimation d'une dérive probable ;
+- la génération de calibrations ;
+- la conservation complète de l'historique des corrections.
+
+---
+
+# Philosophie générale
+
+Le système sépare volontairement plusieurs notions :
+
+| Concept              | Rôle                            |
+| -------------------- | ------------------------------- |
+| WeightReferenceEvent | Observation terrain             |
+| WeightBaseline       | Estimation automatique          |
+| WeightCalibration    | Correction réellement appliquée |
+| StabilityAnalysis    | Analyse statistique             |
+
+Cette séparation permet :
+
+- d'expliquer l'origine d'une correction ;
+- d'auditer les décisions de l'algorithme ;
+- de recalculer les poids historiques.
+
+---
+
+# WeightReferenceEvent
+
+## Objectif
+
+Représente une mesure de référence réalisée volontairement par l'apiculteur.
+
+Exemple :
+
+L'utilisateur pose un poids étalon de 1 kg.
+
+Variation attendue :
+
++1.000 kg
+
+Variation mesurée :
+
++0.942 kg
+
+L'événement est enregistré mais aucune correction n'est appliquée.
+
+## Utilisation
+
+Ces événements servent à :
+
+- calculer un gain ;
+- vérifier la qualité de calibration ;
+- valider les estimations automatiques.
+
+---
+
+# WeightBaseline
+
+## Objectif
+
+Représente une estimation automatique du niveau réel de la balance.
+
+Une baseline est produite lorsque l'algorithme détecte une période suffisamment stable.
+
+Exemple :
+
+Pendant 30 minutes :
+
+- faible variance ;
+- faible pente ;
+- absence de manipulation.
+
+Poids observé :
+
+52.14 kg
+
+L'algorithme considère alors :
+
+"La balance semble stable autour de 52.14 kg."
+
+Cette valeur est enregistrée comme baseline.
+
+## Important
+
+Une baseline n'est pas une calibration.
+
+Elle représente uniquement une hypothèse.
+
+---
+
+# WeightCalibration
+
+## Objectif
+
+Représente une correction réellement appliquée aux mesures.
+
+Exemple :
+
+Offset :
+
+-2.4 kg
+
+Poids corrigé :
+
+poids_mesuré - offset
+
+Toutes les calibrations sont historisées.
+
+Une seule calibration peut être active simultanément pour une balance.
+
+---
+
+# Analyse de stabilité
+
+## Objectif
+
+Déterminer si une période de mesures peut être considérée comme stable.
+
+L'analyse repose sur :
+
+- la variance ;
+- la pente ;
+- la durée de la fenêtre.
+
+---
+
+## Régression linéaire
+
+La pente est calculée par régression linéaire.
+
+L'unité utilisée est :
+
+kg / heure
+
+Exemple :
+
++0.10 kg observé sur une heure
+
+Pente :
+
+0.10 kg/h
+
+Une pente proche de zéro indique une masse stable.
+
+---
+
+## Variance
+
+La variance mesure la dispersion des valeurs autour de leur moyenne.
+
+Une faible variance indique :
+
+- peu de bruit ;
+- peu de perturbations ;
+- stabilité mécanique.
+
+---
+
+## Durée minimale
+
+Une fenêtre stable doit durer suffisamment longtemps.
+
+Version actuelle :
+
+30 minutes minimum.
+
+---
+
+## Score de confiance
+
+Chaque analyse produit un score :
+
+0.0 → très faible confiance
+
+1.0 → très forte confiance
+
+Ce score dépend :
+
+- de la variance ;
+- de la pente ;
+- de la durée observée.
+
+---
+
+# Détection automatique de baseline
+
+Le processus est le suivant :
+
+Mesures agrégées
+↓
+Analyse de stabilité
+↓
+Fenêtre stable
+↓
+Calcul du poids moyen
+↓
+Création d'un BaselineCandidateDTO
+↓
+Création d'un WeightBaseline
+
+Le poids moyen de la fenêtre devient l'estimation de référence.
+
+---
+
+# Calibration par poids étalon
+
+Lorsqu'un poids de référence est utilisé :
+
+Gain = variation_attendue / variation_mesurée
+
+Exemple :
+
+Attendu :
+
+1.000 kg
+
+Mesuré :
+
+0.950 kg
+
+Gain :
+
+1.0526
+
+Cela signifie que les variations observées doivent être multipliées par environ 1.05.
+
+---
+
+# Historisation
+
+Toutes les informations sont conservées :
+
+- événements de référence ;
+- baselines ;
+- calibrations.
+
+Cette historisation permet :
+
+- le recalcul des poids historiques ;
+- l'audit des décisions ;
+- l'amélioration future des algorithmes.
+
+---
+
+# Architecture
+
+## DTO
+
+- StabilityAnalysisDTO
+- BaselineCandidateDTO
+- CalibrationProposalDTO (prévu)
+
+## Services
+
+- weight_stability_service
+- weight_baseline_service
+- weight_reference_service
+- weight_calibration_service
+- auto_calibration_service (prévu)
+
+## Repositories
+
+- weight_baseline_repository
+- weight_reference_event_repository
+- weight_calibration_repository
+
+---
+
+# Évolutions prévues
+
+## V2
+
+- score de confiance avancé ;
+- détection automatique des manipulations ;
+- prise en compte de la température ;
+- fusion de plusieurs périodes stables.
+
+## V3
+
+- auto-calibration complète ;
+- validation automatique des dérives ;
+- recalibrage sans intervention utilisateur.
+
+## V4
+
+- apprentissage des profils de dérive ;
+- adaptation automatique aux saisons ;
+- estimation prédictive de dérive.

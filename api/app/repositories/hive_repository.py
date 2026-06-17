@@ -30,11 +30,7 @@ def get_by_id(
     db: Session,
     hive_id: int,
 ) -> Hive | None:
-    return (
-        db.query(Hive)
-        .filter(Hive.id == hive_id)
-        .first()
-    )
+    return db.query(Hive).filter(Hive.id == hive_id).first()
 
 
 def delete(

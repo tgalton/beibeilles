@@ -54,6 +54,7 @@ if _database_url is None:
 
 DATABASE_URL: str = _database_url
 
+
 # =========================================================
 # Base SQLAlchemy
 #
@@ -126,7 +127,6 @@ def wait_for_db(
     # exception -> retry automatique
     # =====================================================
     with engine.connect():
-
         print("Database connection established.")
 
         return
@@ -163,9 +163,7 @@ def get_db() -> Generator[Session, None, None]:
     db = SessionLocal()
 
     try:
-
         yield db
 
     finally:
-
         db.close()

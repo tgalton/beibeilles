@@ -21,12 +21,9 @@ def ingest_measurements(
     # Recherche ou création automatique
     # du device IoT
     # =====================================================
-    sensor_device: SensorDevice = (
-        sensor_device_repository
-        .get_or_create_by_serial(
-            db=db,
-            serial_number=payload.device_serial,
-        )
+    sensor_device: SensorDevice = sensor_device_repository.get_or_create_by_serial(
+        db=db,
+        serial_number=payload.device_serial,
     )
 
     # =====================================================
@@ -42,31 +39,25 @@ def ingest_measurements(
     # -> modèles SQLAlchemy
     # =====================================================
     for measurement in payload.measurements:
-
         db_measurement = MeasurementRaw(
-
             # =============================================
             # Type de mesure :
             # temperature / humidity / co2 / weight
             # =============================================
             type=measurement.type,
-
             # =============================================
             # Valeur brute du capteur
             # =============================================
             value=measurement.value,
-
             # =============================================
             # Niveau de ruche associé
             # (optionnel)
             # =============================================
             hive_level_id=measurement.hive_level_id,
-
             # =============================================
             # Device IoT ayant envoyé la mesure
             # =============================================
             sensor_device_id=sensor_device.id,
-
             # =============================================
             # IMPORTANT :
             #
@@ -81,10 +72,7 @@ def ingest_measurements(
             # Fallback :
             # heure serveur UTC
             # =============================================
-            measured_at=(
-                measurement.measured_at
-                or datetime.now(UTC)
-            ),
+            measured_at=(measurement.measured_at or datetime.now(UTC)),
         )
 
         measurements.append(db_measurement)
