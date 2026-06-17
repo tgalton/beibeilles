@@ -44,7 +44,6 @@ def update(
     return measurement
 
 
-
 def get_by_measurement_5m_id(
     db: Session,
     measurement_5m_id: int,
@@ -63,11 +62,11 @@ def get_by_measurement_5m_id(
             MeasurementCorrected,
         )
         .filter(
-            MeasurementCorrected.measurement_5m_id
-            == measurement_5m_id,
+            MeasurementCorrected.measurement_5m_id == measurement_5m_id,
         )
         .first()
     )
+
 
 def delete_from_date(
     db: Session,
@@ -88,18 +87,15 @@ def delete_from_date(
             MeasurementCorrected,
         )
         .filter(
-            MeasurementCorrected.hive_level_id
-            == hive_level_id,
+            MeasurementCorrected.hive_level_id == hive_level_id,
         )
         .filter(
-            MeasurementCorrected.measured_at
-            >= measured_at,
+            MeasurementCorrected.measured_at >= measured_at,
         )
         .delete()
     )
 
     db.commit()
-
 
 
 def get_after_date(
@@ -117,12 +113,10 @@ def get_after_date(
             MeasurementCorrected,
         )
         .filter(
-            MeasurementCorrected.hive_level_id
-            == hive_level_id,
+            MeasurementCorrected.hive_level_id == hive_level_id,
         )
         .filter(
-            MeasurementCorrected.measured_at
-            >= measured_at,
+            MeasurementCorrected.measured_at >= measured_at,
         )
         .order_by(
             MeasurementCorrected.measured_at.asc(),
@@ -149,12 +143,10 @@ def get_latest_for_hive_level(
         )
         .join(
             Measurement5m,
-            Measurement5m.id
-            == MeasurementCorrected.measurement_5m_id,
+            Measurement5m.id == MeasurementCorrected.measurement_5m_id,
         )
         .filter(
-            Measurement5m.hive_level_id
-            == hive_level_id,
+            Measurement5m.hive_level_id == hive_level_id,
         )
         .order_by(
             Measurement5m.bucket_at.desc(),
@@ -176,33 +168,22 @@ def upsert(
     =====================================================
     """
 
-    existing = (
-        get_by_measurement_5m_id(
-            db=db,
-            measurement_5m_id=(
-                measurement.measurement_5m_id
-            ),
-        )
+    existing = get_by_measurement_5m_id(
+        db=db,
+        measurement_5m_id=(measurement.measurement_5m_id),
     )
 
     if existing is None:
-
         return create(
             db=db,
             measurement=measurement,
         )
 
-    existing.calibration_id = (
-        measurement.calibration_id
-    )
+    existing.calibration_id = measurement.calibration_id
 
-    existing.raw_weight_kg = (
-        measurement.raw_weight_kg
-    )
+    existing.raw_weight_kg = measurement.raw_weight_kg
 
-    existing.corrected_weight_kg = (
-        measurement.corrected_weight_kg
-    )
+    existing.corrected_weight_kg = measurement.corrected_weight_kg
 
     db.commit()
 
@@ -211,28 +192,6 @@ def upsert(
     )
 
     return existing
-
-def get_by_measurement_5m_id(
-    db: Session,
-    measurement_5m_id: int,
-) -> MeasurementCorrected | None:
-    """
-    =====================================================
-    Retourne la mesure corrigée associée
-    à un bucket 5 minutes.
-    =====================================================
-    """
-
-    return (
-        db.query(
-            MeasurementCorrected,
-        )
-        .filter(
-            MeasurementCorrected.measurement_5m_id
-            == measurement_5m_id,
-        )
-        .first()
-    )
 
 
 def get_latest_corrected_weight(
@@ -257,19 +216,16 @@ def get_latest_corrected_weight(
         )
         .join(
             Measurement5m,
-            Measurement5m.id
-            == MeasurementCorrected.measurement_5m_id,
+            Measurement5m.id == MeasurementCorrected.measurement_5m_id,
         )
         .filter(
-            Measurement5m.hive_level_id
-            == hive_level_id,
+            Measurement5m.hive_level_id == hive_level_id,
         )
         .order_by(
             Measurement5m.bucket_at.desc(),
         )
         .first()
     )
-
 
 
 def get_corrected_weights_between_dates(
@@ -296,20 +252,16 @@ def get_corrected_weights_between_dates(
         )
         .join(
             Measurement5m,
-            Measurement5m.id
-            == MeasurementCorrected.measurement_5m_id,
+            Measurement5m.id == MeasurementCorrected.measurement_5m_id,
         )
         .filter(
-            Measurement5m.hive_level_id
-            == hive_level_id,
+            Measurement5m.hive_level_id == hive_level_id,
         )
         .filter(
-            Measurement5m.bucket_at
-            >= start_at,
+            Measurement5m.bucket_at >= start_at,
         )
         .filter(
-            Measurement5m.bucket_at
-            <= end_at,
+            Measurement5m.bucket_at <= end_at,
         )
         .order_by(
             Measurement5m.bucket_at.asc(),

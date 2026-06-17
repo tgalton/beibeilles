@@ -59,9 +59,7 @@ from app.services import weight_calibration_service
 
 
 # calibration active trouvée
-@patch(
-    "app.services.weight_calibration_service.weight_calibration_repository"
-)
+@patch("app.services.weight_calibration_service.weight_calibration_repository")
 def test_get_current_calibration_found(
     mock_repository,
 ):
@@ -79,21 +77,16 @@ def test_get_current_calibration_found(
 
     db = Mock()
 
-    result = (
-        weight_calibration_service
-        .get_current_calibration(
-            db=db,
-            hive_level_id=1,
-        )
+    result = weight_calibration_service.get_current_calibration(
+        db=db,
+        hive_level_id=1,
     )
 
     assert result == calibration
 
 
 # aucune calibration
-@patch(
-    "app.services.weight_calibration_service.weight_calibration_repository"
-)
+@patch("app.services.weight_calibration_service.weight_calibration_repository")
 def test_get_current_calibration_none(
     mock_repository,
 ):
@@ -108,20 +101,16 @@ def test_get_current_calibration_none(
 
     db = Mock()
 
-    result = (
-        weight_calibration_service
-        .get_current_calibration(
-            db=db,
-            hive_level_id=1,
-        )
+    result = weight_calibration_service.get_current_calibration(
+        db=db,
+        hive_level_id=1,
     )
 
     assert result is None
 
+
 # poids brut sans calibration
-@patch(
-    "app.services.weight_calibration_service.weight_calibration_repository"
-)
+@patch("app.services.weight_calibration_service.weight_calibration_repository")
 def test_apply_calibration_without_calibration(
     mock_repository,
 ):
@@ -136,22 +125,18 @@ def test_apply_calibration_without_calibration(
 
     db = Mock()
 
-    result = (
-        weight_calibration_service
-        .apply_calibration(
-            db=db,
-            hive_level_id=1,
-            raw_weight=50.0,
-            measured_at=datetime.now(UTC),
-        )
+    result = weight_calibration_service.apply_calibration(
+        db=db,
+        hive_level_id=1,
+        raw_weight=50.0,
+        measured_at=datetime.now(UTC),
     )
 
     assert result == 50.0
 
+
 # offset seul
-@patch(
-    "app.services.weight_calibration_service.weight_calibration_repository"
-)
+@patch("app.services.weight_calibration_service.weight_calibration_repository")
 def test_apply_calibration_offset_only(
     mock_repository,
 ):
@@ -178,22 +163,18 @@ def test_apply_calibration_offset_only(
 
     db = Mock()
 
-    result = (
-        weight_calibration_service
-        .apply_calibration(
-            db=db,
-            hive_level_id=1,
-            raw_weight=50.0,
-            measured_at=datetime.now(UTC),
-        )
+    result = weight_calibration_service.apply_calibration(
+        db=db,
+        hive_level_id=1,
+        raw_weight=50.0,
+        measured_at=datetime.now(UTC),
     )
 
     assert result == 52.0
 
+
 # offset + gain
-@patch(
-    "app.services.weight_calibration_service.weight_calibration_repository"
-)
+@patch("app.services.weight_calibration_service.weight_calibration_repository")
 def test_apply_calibration_offset_and_gain(
     mock_repository,
 ):
@@ -219,22 +200,18 @@ def test_apply_calibration_offset_and_gain(
 
     db = Mock()
 
-    result = (
-        weight_calibration_service
-        .apply_calibration(
-            db=db,
-            hive_level_id=1,
-            raw_weight=50.0,
-            measured_at=datetime.now(UTC),
-        )
+    result = weight_calibration_service.apply_calibration(
+        db=db,
+        hive_level_id=1,
+        raw_weight=50.0,
+        measured_at=datetime.now(UTC),
     )
 
     assert result == 54.6
 
+
 # gain inférieur à 1
-@patch(
-    "app.services.weight_calibration_service.weight_calibration_repository"
-)
+@patch("app.services.weight_calibration_service.weight_calibration_repository")
 def test_apply_calibration_gain_less_than_one(
     mock_repository,
 ):
@@ -260,14 +237,11 @@ def test_apply_calibration_gain_less_than_one(
 
     db = Mock()
 
-    result = (
-        weight_calibration_service
-        .apply_calibration(
-            db=db,
-            hive_level_id=1,
-            raw_weight=100.0,
-            measured_at=datetime.now(UTC),
-        )
+    result = weight_calibration_service.apply_calibration(
+        db=db,
+        hive_level_id=1,
+        raw_weight=100.0,
+        measured_at=datetime.now(UTC),
     )
 
     assert result == 95.0

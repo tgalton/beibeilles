@@ -14,7 +14,6 @@ from app.schemas.iot_ingest import IoTIngest
 from fastapi import HTTPException
 
 
-
 def ingest_measurements(
     db: Session,
     payload: IoTIngest,
@@ -44,27 +43,23 @@ def ingest_measurements(
     # =====================================================
     # 1. récupérer ou créer le device
     # =====================================================
-    sensor_device: SensorDevice = (
-        sensor_device_repository.get_or_create_by_serial(
-            db=db,
-            serial_number=payload.device_serial,
-        )
+    sensor_device: SensorDevice = sensor_device_repository.get_or_create_by_serial(
+        db=db,
+        serial_number=payload.device_serial,
     )
 
     created_measurements: list[MeasurementRaw] = []
-    
+
     # =====================================================
     # 2. transformer payload -> ORM
     # =====================================================
 
     for m in payload.measurements:
-
         db_measurement = MeasurementRaw(
             type=m.type,
             value=m.value,
             hive_level_id=m.hive_level_id,
             sensor_device_id=sensor_device.id,
-
             # =============================================
             # IMPORTANT :
             #
@@ -85,9 +80,8 @@ def ingest_measurements(
         db=db,
         measurements=created_measurements,
     )
-    
-    
-    
+
+
 def get_measurement_by_id(
     db: Session,
     measurement_id: int,
@@ -98,22 +92,18 @@ def get_measurement_by_id(
     =========================================================
     """
 
-    measurement = (
-        measurement_raw_repository.get_by_id(
-            db=db,
-            measurement_id=measurement_id,
-        )
+    measurement = measurement_raw_repository.get_by_id(
+        db=db,
+        measurement_id=measurement_id,
     )
 
     if measurement is None:
-
         raise HTTPException(
             status_code=404,
             detail="Measurement RAW not found",
         )
 
     return measurement
-
 
 
 def get_measurements(

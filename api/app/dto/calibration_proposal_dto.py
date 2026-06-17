@@ -3,6 +3,7 @@ from app.enums.calibration_source import (
     CalibrationSource,
 )
 
+
 @dataclass(slots=True)
 class CalibrationProposalDTO:
     """

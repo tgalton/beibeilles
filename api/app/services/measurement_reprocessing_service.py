@@ -1,8 +1,5 @@
 from sqlalchemy.orm import Session
 
-from app.models.measurement_5m import (
-    Measurement5m,
-)
 
 from app.services import (
     measurement_corrected_service,
@@ -39,23 +36,18 @@ def rebuild_corrected_measurements(
     =====================================================
     """
 
-    measurements = (
-        measurement_5m_repository
-        .get_weight_measurements_for_hive_level(
-            db=db,
-            hive_level_id=hive_level_id,
-        )
+    measurements = measurement_5m_repository.get_weight_measurements_for_hive_level(
+        db=db,
+        hive_level_id=hive_level_id,
     )
 
     count = 0
 
     for measurement in measurements:
-
-        measurement_corrected_service \
-            .create_or_replace_from_measurement_5m(
-                db=db,
-                measurement=measurement,
-            )
+        measurement_corrected_service.create_or_replace_from_measurement_5m(
+            db=db,
+            measurement=measurement,
+        )
 
         count += 1
 

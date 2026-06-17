@@ -55,10 +55,7 @@ def apply_proposal(
         algorithm_version=proposal.algorithm_version,
     )
 
-    return (
-        weight_calibration_repository
-        .create(
-            db=db,
-            calibration=calibration,
-        )
+    return weight_calibration_repository.create(
+        db=db,
+        calibration=calibration,
     )

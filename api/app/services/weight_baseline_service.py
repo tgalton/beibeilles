@@ -1,6 +1,7 @@
 from datetime import UTC
 from datetime import datetime
 
+from app.models.measurement_5m import Measurement5m
 from app.dto.baseline_candidate_dto import (
     BaselineCandidateDTO,
 )
@@ -31,6 +32,7 @@ MAX_BUCKET_VARIATION_KG = 0.050
 
 MIN_STABLE_BUCKET_COUNT = 6
 
+
 def save_baseline(
     db: Session,
     candidate: BaselineCandidateDTO,
@@ -45,12 +47,9 @@ def save_baseline(
         candidate,
     )
 
-    return (
-        weight_baseline_repository
-        .create(
-            db=db,
-            baseline=baseline,
-        )
+    return weight_baseline_repository.create(
+        db=db,
+        baseline=baseline,
     )
 
 
@@ -77,15 +76,9 @@ def is_bucket_stable(
     =====================================================
     """
 
-    variation = (
-        measurement.max_value
-        - measurement.min_value
-    )
+    variation = measurement.max_value - measurement.min_value
 
-    return (
-        variation
-        <= MAX_BUCKET_VARIATION_KG
-    )
+    return variation <= MAX_BUCKET_VARIATION_KG
 
 
 def count_stable_buckets(
@@ -99,12 +92,12 @@ def count_stable_buckets(
 
     return sum(
         1
-        for measurement
-        in measurements
+        for measurement in measurements
         if is_bucket_stable(
             measurement,
         )
     )
+
 
 def is_stable_window(
     measurements: list[Measurement5m],
@@ -127,18 +120,13 @@ def is_stable_window(
     =====================================================
     """
 
-    if (
-        len(measurements)
-        < MIN_STABLE_BUCKET_COUNT
-    ):
+    if len(measurements) < MIN_STABLE_BUCKET_COUNT:
         return False
 
-    return (
-        count_stable_buckets(
-            measurements,
-        )
-        == len(measurements)
-    )
+    return count_stable_buckets(
+        measurements,
+    ) == len(measurements)
+
 
 def compute_baseline_weight(
     measurements: list[Measurement5m],
@@ -158,13 +146,8 @@ def compute_baseline_weight(
             "measurements cannot be empty",
         )
 
-    return (
-        sum(
-            measurement.avg_value
-            for measurement
-            in measurements
-        )
-        / len(measurements)
+    return sum(measurement.avg_value for measurement in measurements) / len(
+        measurements
     )
 
 
@@ -194,32 +177,24 @@ def detect_baseline_candidate(
     =====================================================
     """
 
-    analysis = (
-        weight_stability_service
-        .analyze_stability(
-            weights=weights,
-            timestamps_minutes=timestamps_minutes,
-        )
+    analysis = weight_stability_service.analyze_stability(
+        weights=weights,
+        timestamps_minutes=timestamps_minutes,
     )
 
     if not analysis.is_stable:
         return None
 
-    baseline_weight = (
-        sum(weights)
-        / len(weights)
-    )
+    baseline_weight = sum(weights) / len(weights)
 
     return BaselineCandidateDTO(
         hive_level_id=hive_level_id,
         baseline_offset_kg=baseline_weight,
         confidence=analysis.confidence,
-        stable_duration_minutes=(
-            max(timestamps_minutes)
-            - min(timestamps_minutes)
-        ),
+        stable_duration_minutes=(max(timestamps_minutes) - min(timestamps_minutes)),
         algorithm_version=ALGORITHM_VERSION,
     )
+
 
 def build_baseline(
     candidate: BaselineCandidateDTO,
@@ -232,20 +207,10 @@ def build_baseline(
     """
 
     return WeightBaseline(
-        hive_level_id=(
-            candidate.hive_level_id
-        ),
+        hive_level_id=(candidate.hive_level_id),
         computed_at=datetime.now(UTC),
-        baseline_offset_kg=(
-            candidate.baseline_offset_kg
-        ),
-        confidence=(
-            candidate.confidence
-        ),
-        stable_duration_minutes=(
-            candidate.stable_duration_minutes
-        ),
-        algorithm_version=(
-            candidate.algorithm_version
-        ),
+        baseline_offset_kg=(candidate.baseline_offset_kg),
+        confidence=(candidate.confidence),
+        stable_duration_minutes=(candidate.stable_duration_minutes),
+        algorithm_version=(candidate.algorithm_version),
     )

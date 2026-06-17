@@ -44,12 +44,9 @@ def propose_from_reference_event(
     =====================================================
     """
 
-    gain = (
-        weight_reference_service
-        .compute_gain_from_reference(
-            expected_delta_kg=expected_delta_kg,
-            measured_delta_kg=measured_delta_kg,
-        )
+    gain = weight_reference_service.compute_gain_from_reference(
+        expected_delta_kg=expected_delta_kg,
+        measured_delta_kg=measured_delta_kg,
     )
 
     return CalibrationProposalDTO(
@@ -84,10 +81,7 @@ def propose_from_baseline_drift(
     =====================================================
     """
 
-    offset = (
-        current_weight
-        - baseline_weight
-    )
+    offset = current_weight - baseline_weight
 
     return CalibrationProposalDTO(
         offset_kg=offset,

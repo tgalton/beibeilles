@@ -127,7 +127,6 @@ def test_get_hive_level_by_id_not_found(
     mock_get_by_id.return_value = None
 
     with pytest.raises(HTTPException) as exc:
-
         hive_level_service.get_hive_level_by_id(
             db=Mock(),
             level_id=999,

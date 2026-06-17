@@ -16,38 +16,27 @@ from app.services import (
     recalibration_pipeline_service,
 )
 
-@patch(
-    "app.services.recalibration_pipeline_service."
-    "weight_baseline_service"
-)
+
+@patch("app.services.recalibration_pipeline_service.weight_baseline_service")
 def test_pipeline_no_candidate(
     mock_baseline_service,
 ):
 
     mock_baseline_service.detect_baseline_candidate.return_value = None
 
-    result = (
-        recalibration_pipeline_service
-        .process_stable_window(
-            db=Mock(),
-            hive_level_id=1,
-            reference_baseline=Mock(),
-            weights=[50],
-            timestamps_minutes=[0],
-        )
+    result = recalibration_pipeline_service.process_stable_window(
+        db=Mock(),
+        hive_level_id=1,
+        reference_baseline=Mock(),
+        weights=[50],
+        timestamps_minutes=[0],
     )
 
     assert result is None
 
 
-@patch(
-    "app.services.recalibration_pipeline_service."
-    "auto_recalibration_service"
-)
-@patch(
-    "app.services.recalibration_pipeline_service."
-    "weight_baseline_service"
-)
+@patch("app.services.recalibration_pipeline_service.auto_recalibration_service")
+@patch("app.services.recalibration_pipeline_service.weight_baseline_service")
 def test_pipeline_no_proposal(
     mock_baseline_service,
     mock_auto_service,
@@ -64,40 +53,25 @@ def test_pipeline_no_proposal(
         computed_at=datetime.now(UTC),
     )
 
-    mock_baseline_service.detect_baseline_candidate.return_value = (
-        candidate
-    )
+    mock_baseline_service.detect_baseline_candidate.return_value = candidate
 
-    mock_baseline_service.build_baseline.return_value = (
-        baseline
-    )
+    mock_baseline_service.build_baseline.return_value = baseline
 
-    mock_auto_service.propose_from_baseline_drift.return_value = (
-        None
-    )
+    mock_auto_service.propose_from_baseline_drift.return_value = None
 
-    result = (
-        recalibration_pipeline_service
-        .process_stable_window(
-            db=Mock(),
-            hive_level_id=1,
-            reference_baseline=baseline,
-            weights=[],
-            timestamps_minutes=[],
-        )
+    result = recalibration_pipeline_service.process_stable_window(
+        db=Mock(),
+        hive_level_id=1,
+        reference_baseline=baseline,
+        weights=[],
+        timestamps_minutes=[],
     )
 
     assert result is None
 
 
-@patch(
-    "app.services.recalibration_pipeline_service."
-    "auto_recalibration_service"
-)
-@patch(
-    "app.services.recalibration_pipeline_service."
-    "weight_baseline_service"
-)
+@patch("app.services.recalibration_pipeline_service.auto_recalibration_service")
+@patch("app.services.recalibration_pipeline_service.weight_baseline_service")
 def test_pipeline_create_calibration(
     mock_baseline_service,
     mock_auto_service,
@@ -123,31 +97,20 @@ def test_pipeline_create_calibration(
         source=CalibrationSource.AUTO_DRIFT,
     )
 
-    mock_baseline_service.detect_baseline_candidate.return_value = (
-        candidate
-    )
+    mock_baseline_service.detect_baseline_candidate.return_value = candidate
 
-    mock_baseline_service.build_baseline.return_value = (
-        baseline
-    )
+    mock_baseline_service.build_baseline.return_value = baseline
 
-    mock_auto_service.propose_from_baseline_drift.return_value = (
-        Mock()
-    )
+    mock_auto_service.propose_from_baseline_drift.return_value = Mock()
 
-    mock_auto_service.create_auto_calibration.return_value = (
-        calibration
-    )
+    mock_auto_service.create_auto_calibration.return_value = calibration
 
-    result = (
-        recalibration_pipeline_service
-        .process_stable_window(
-            db=Mock(),
-            hive_level_id=1,
-            reference_baseline=baseline,
-            weights=[],
-            timestamps_minutes=[],
-        )
+    result = recalibration_pipeline_service.process_stable_window(
+        db=Mock(),
+        hive_level_id=1,
+        reference_baseline=baseline,
+        weights=[],
+        timestamps_minutes=[],
     )
 
     assert result == calibration

@@ -10,10 +10,7 @@ from app.repositories import (
 )
 
 
-@patch(
-    "app.services.auto_recalibration_orchestrator."
-    "measurement_5m_repository"
-)
+@patch("app.services.auto_recalibration_orchestrator.measurement_5m_repository")
 def test_run_not_enough_measurements(
     mock_repository,
 ):
@@ -32,17 +29,9 @@ def test_run_not_enough_measurements(
 
 
 
-from unittest.mock import patch
 
-
-@patch(
-    "app.services.auto_recalibration_orchestrator."
-    "weight_baseline_service"
-)
-@patch(
-    "app.services.auto_recalibration_orchestrator."
-    "measurement_5m_repository"
-)
+@patch("app.services.auto_recalibration_orchestrator.weight_baseline_service")
+@patch("app.services.auto_recalibration_orchestrator.measurement_5m_repository")
 def test_run_unstable_window(
     mock_repository,
     mock_baseline_service,
@@ -54,14 +43,9 @@ def test_run_unstable_window(
     =====================================================
     """
 
-    measurements = [
-        Mock(avg_value=50.0)
-        for _ in range(6)
-    ]
+    measurements = [Mock(avg_value=50.0) for _ in range(6)]
 
-    mock_repository.get_latest_weight_measurements.return_value = (
-        measurements
-    )
+    mock_repository.get_latest_weight_measurements.return_value = measurements
 
     mock_baseline_service.detect_baseline_candidate.return_value = None
 
@@ -73,13 +57,6 @@ def test_run_unstable_window(
     mock_baseline_service.save_baseline.assert_not_called()
 
 
-
-from unittest.mock import Mock
-from unittest.mock import patch
-
-from app.dto.baseline_candidate_dto import (
-    BaselineCandidateDTO,
-)
 
 
 # @patch(
@@ -131,9 +108,6 @@ from app.dto.baseline_candidate_dto import (
 #     mock_baseline_service.save_baseline.assert_called_once()
 
 
-
-
-
 def main() -> None:
     """
     =====================================================
@@ -145,16 +119,11 @@ def main() -> None:
     db = SessionLocal()
 
     try:
-
-        hive_levels = (
-            hive_level_repository
-            .get_all(
-                db=db,
-            )
+        hive_levels = hive_level_repository.get_all(
+            db=db,
         )
 
         for hive_level in hive_levels:
-
             auto_recalibration_orchestrator.run(
                 db=db,
                 hive_level_id=hive_level.id,

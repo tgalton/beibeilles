@@ -46,10 +46,7 @@ def create_manual_calibration(
     =========================================================
     """
 
-    return (
-        weight_calibration_service
-        .create_manual_calibration(
-            db=db,
-            payload=payload,
-        )
+    return weight_calibration_service.create_manual_calibration(
+        db=db,
+        payload=payload,
     )

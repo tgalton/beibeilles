@@ -64,6 +64,7 @@ def get_sensor_by_serial(
 
     return sensor
 
+
 def get_or_create_by_serial(
     db: Session,
     serial_number: str,
@@ -89,6 +90,7 @@ def get_or_create_by_serial(
     db.refresh(device)
 
     return device
+
 
 def associate_device_with_hive(
     db: Session,

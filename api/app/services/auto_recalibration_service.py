@@ -62,8 +62,7 @@ def propose_from_baseline_drift(
     """
 
     drift_kg = (
-        current_baseline.baseline_offset_kg
-        - reference_baseline.baseline_offset_kg
+        current_baseline.baseline_offset_kg - reference_baseline.baseline_offset_kg
     )
 
     confidence = min(
@@ -105,12 +104,7 @@ def should_recalibrate(
     =====================================================
     """
 
-    return (
-        abs(drift_kg)
-        >= MIN_DRIFT_KG
-        and confidence
-        >= MIN_CONFIDENCE
-    )
+    return abs(drift_kg) >= MIN_DRIFT_KG and confidence >= MIN_CONFIDENCE
 
 
 def create_auto_calibration(
@@ -135,16 +129,12 @@ def create_auto_calibration(
 
     now = datetime.now(UTC)
 
-    current_calibration = (
-        weight_calibration_service
-        .get_current_calibration(
-            db=db,
-            hive_level_id=hive_level_id,
-        )
+    current_calibration = weight_calibration_service.get_current_calibration(
+        db=db,
+        hive_level_id=hive_level_id,
     )
 
     if current_calibration is not None:
-
         current_calibration.valid_to = now
 
         weight_calibration_service.update(
@@ -162,9 +152,7 @@ def create_auto_calibration(
         algorithm_version="auto_recalibration_v1",
     )
 
-    return (
-        weight_calibration_service.create(
-            db=db,
-            calibration=calibration,
-        )
+    return weight_calibration_service.create(
+        db=db,
+        calibration=calibration,
     )

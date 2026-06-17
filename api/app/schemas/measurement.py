@@ -20,7 +20,6 @@ MeasurementType = Literal[
 
 
 class MeasurementBase(BaseModel):
-
     type: MeasurementType
 
     value: float
@@ -53,7 +52,6 @@ class MeasurementBase(BaseModel):
 # Création API interne
 # =========================================================
 class MeasurementCreate(MeasurementBase):
-
     sensor_device_id: int
 
 
@@ -61,7 +59,6 @@ class MeasurementCreate(MeasurementBase):
 # Lecture API
 # =========================================================
 class MeasurementRead(MeasurementBase):
-
     id: int
 
     sensor_device_id: int

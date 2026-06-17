@@ -27,12 +27,9 @@ def get_latest_weight(
     =====================================================
     """
 
-    return (
-        measurement_corrected_repository
-        .get_latest_corrected_weight(
-            db=db,
-            hive_level_id=hive_level_id,
-        )
+    return measurement_corrected_repository.get_latest_corrected_weight(
+        db=db,
+        hive_level_id=hive_level_id,
     )
 
 
@@ -53,12 +50,9 @@ def get_weight_history(
     =====================================================
     """
 
-    return (
-        measurement_corrected_repository
-        .get_corrected_weights_between_dates(
-            db=db,
-            hive_level_id=hive_level_id,
-            start_at=start_at,
-            end_at=end_at,
-        )
+    return measurement_corrected_repository.get_corrected_weights_between_dates(
+        db=db,
+        hive_level_id=hive_level_id,
+        start_at=start_at,
+        end_at=end_at,
     )

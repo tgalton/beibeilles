@@ -20,6 +20,7 @@ from app.routers import (
 from app.database import engine
 from app.database import wait_for_db
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
 
@@ -45,9 +46,9 @@ app.include_router(hive_level_router)
 app.include_router(sensor_device_router)
 app.include_router(measurement_raw_router)
 app.include_router(measurement_5m_router)
-app.include_router(measurement_corrected_router.router,
+app.include_router(
+    measurement_corrected_router.router,
 )
-
 
 
 # =========================================================

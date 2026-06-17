@@ -44,70 +44,50 @@ def run(
     =====================================================
     """
 
-    measurements = (
-        measurement_5m_repository
-        .get_latest_weight_measurements(
-            db=db,
-            hive_level_id=hive_level_id,
-            limit=WINDOW_SIZE,
-        )
+    measurements = measurement_5m_repository.get_latest_weight_measurements(
+        db=db,
+        hive_level_id=hive_level_id,
+        limit=WINDOW_SIZE,
     )
 
     if len(measurements) < WINDOW_SIZE:
         return
 
-    weights = [
-        measurement.avg_value
-        for measurement
-        in measurements
-    ]
+    weights = [measurement.avg_value for measurement in measurements]
 
     timestamps = [
         index * 5
-        for index
-        in range(
+        for index in range(
             len(measurements),
         )
     ]
 
-    candidate = (
-        weight_baseline_service
-        .detect_baseline_candidate(
-            hive_level_id=hive_level_id,
-            weights=weights,
-            timestamps_minutes=timestamps,
-        )
+    candidate = weight_baseline_service.detect_baseline_candidate(
+        hive_level_id=hive_level_id,
+        weights=weights,
+        timestamps_minutes=timestamps,
     )
 
     if candidate is None:
         return
 
-    current_baseline = (
-        weight_baseline_service
-        .save_baseline(
-            db=db,
-            candidate=candidate,
-        )
+    current_baseline = weight_baseline_service.save_baseline(
+        db=db,
+        candidate=candidate,
     )
 
-    reference_baseline = (
-        weight_baseline_repository
-        .get_previous_baseline(
-            db=db,
-            hive_level_id=hive_level_id,
-            baseline_id=current_baseline.id,
-        )
+    reference_baseline = weight_baseline_repository.get_previous_baseline(
+        db=db,
+        hive_level_id=hive_level_id,
+        baseline_id=current_baseline.id,
     )
 
     if reference_baseline is None:
         return
 
-    proposal = (
-        auto_recalibration_service
-        .propose_from_baseline_drift(
-            reference_baseline=reference_baseline,
-            current_baseline=current_baseline,
-        )
+    proposal = auto_recalibration_service.propose_from_baseline_drift(
+        reference_baseline=reference_baseline,
+        current_baseline=current_baseline,
     )
 
     if proposal is None:

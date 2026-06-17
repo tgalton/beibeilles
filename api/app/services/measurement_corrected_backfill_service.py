@@ -17,7 +17,6 @@ from app.repositories import (
 )
 
 
-
 def backfill_from_calibration(
     db: Session,
     calibration: WeightCalibration,
@@ -33,23 +32,16 @@ def backfill_from_calibration(
     =====================================================
     """
 
-    measurements = (
-        measurement_5m_repository
-        .get_between_dates(
-            db=db,
-            hive_level_id=calibration.hive_level_id,
-            start_at=calibration.valid_from,
-            end_at=(
-                calibration.valid_to
-                or calibration.valid_from
-            ),
-        )
+    measurements = measurement_5m_repository.get_between_dates(
+        db=db,
+        hive_level_id=calibration.hive_level_id,
+        start_at=calibration.valid_from,
+        end_at=(calibration.valid_to or calibration.valid_from),
     )
 
     count = 0
 
     for measurement in measurements:
-
         measurement_corrected_service.create_from_measurement_5m(
             db=db,
             measurement=measurement,
@@ -76,24 +68,17 @@ def rebuild_hive_level_history(
     =====================================================
     """
 
-    measurements = (
-        measurement_5m_repository
-        .get_weight_measurements_for_hive_level(
-            db=db,
-            hive_level_id=hive_level_id,
-        )
+    measurements = measurement_5m_repository.get_weight_measurements_for_hive_level(
+        db=db,
+        hive_level_id=hive_level_id,
     )
 
     count = 0
 
     for measurement in measurements:
-
-        corrected = (
-            measurement_corrected_service
-            .build_from_measurement_5m(
-                db=db,
-                measurement=measurement,
-            )
+        corrected = measurement_corrected_service.build_from_measurement_5m(
+            db=db,
+            measurement=measurement,
         )
 
         measurement_corrected_repository.upsert(

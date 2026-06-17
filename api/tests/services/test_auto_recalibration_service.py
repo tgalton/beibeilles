@@ -40,12 +40,9 @@ def test_propose_from_baseline_drift_too_small():
         computed_at=datetime.now(UTC),
     )
 
-    proposal = (
-        auto_recalibration_service
-        .propose_from_baseline_drift(
-            reference,
-            current,
-        )
+    proposal = auto_recalibration_service.propose_from_baseline_drift(
+        reference,
+        current,
     )
 
     assert proposal is None
@@ -71,12 +68,9 @@ def test_propose_from_baseline_drift_negative():
         computed_at=datetime.now(UTC),
     )
 
-    proposal = (
-        auto_recalibration_service
-        .propose_from_baseline_drift(
-            reference,
-            current,
-        )
+    proposal = auto_recalibration_service.propose_from_baseline_drift(
+        reference,
+        current,
     )
 
     assert proposal is not None
@@ -84,10 +78,7 @@ def test_propose_from_baseline_drift_negative():
     assert proposal.offset_kg == -1.3
 
 
-@patch(
-    "app.services.auto_recalibration_service."
-    "weight_calibration_service"
-)
+@patch("app.services.auto_recalibration_service.weight_calibration_service")
 def test_create_auto_calibration(
     mock_service,
 ):
@@ -97,7 +88,7 @@ def test_create_auto_calibration(
         gain=1.0,
         confidence=0.95,
         source=CalibrationSource.AUTO_DRIFT,
-        algorithm_version="v1"
+        algorithm_version="v1",
     )
 
     mock_service.get_current_calibration.return_value = None
@@ -115,13 +106,10 @@ def test_create_auto_calibration(
 
     db = Mock()
 
-    result = (
-        auto_recalibration_service
-        .create_auto_calibration(
-            db=db,
-            hive_level_id=1,
-            proposal=proposal,
-        )
+    result = auto_recalibration_service.create_auto_calibration(
+        db=db,
+        hive_level_id=1,
+        proposal=proposal,
     )
 
     assert result == calibration

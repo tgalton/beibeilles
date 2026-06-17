@@ -12,6 +12,7 @@ from app.services import (
 # Helpers
 # =====================================================
 
+
 def build_measurement(
     min_value: float,
     max_value: float,
@@ -39,6 +40,7 @@ def build_measurement(
 # Bucket stable
 # =====================================================
 
+
 def test_is_bucket_stable():
     """
     =====================================================
@@ -61,8 +63,7 @@ def test_is_bucket_stable():
     )
 
     assert (
-        weight_baseline_service
-        .is_bucket_stable(
+        weight_baseline_service.is_bucket_stable(
             measurement,
         )
         is True
@@ -72,6 +73,7 @@ def test_is_bucket_stable():
 # =====================================================
 # Bucket instable
 # =====================================================
+
 
 def test_is_bucket_not_stable():
     """
@@ -95,8 +97,7 @@ def test_is_bucket_not_stable():
     )
 
     assert (
-        weight_baseline_service
-        .is_bucket_stable(
+        weight_baseline_service.is_bucket_stable(
             measurement,
         )
         is False
@@ -106,6 +107,7 @@ def test_is_bucket_not_stable():
 # =====================================================
 # Comptage des buckets stables
 # =====================================================
+
 
 def test_count_stable_buckets():
     """
@@ -141,11 +143,8 @@ def test_count_stable_buckets():
         ),
     ]
 
-    result = (
-        weight_baseline_service
-        .count_stable_buckets(
-            measurements,
-        )
+    result = weight_baseline_service.count_stable_buckets(
+        measurements,
     )
 
     assert result == 3
@@ -154,6 +153,7 @@ def test_count_stable_buckets():
 # =====================================================
 # Fenêtre stable
 # =====================================================
+
 
 def test_is_stable_window():
     """
@@ -174,8 +174,7 @@ def test_is_stable_window():
     ]
 
     assert (
-        weight_baseline_service
-        .is_stable_window(
+        weight_baseline_service.is_stable_window(
             measurements,
         )
         is True
@@ -185,6 +184,7 @@ def test_is_stable_window():
 # =====================================================
 # Fenêtre trop courte
 # =====================================================
+
 
 def test_is_stable_window_not_enough_buckets():
     """
@@ -207,8 +207,7 @@ def test_is_stable_window_not_enough_buckets():
     ]
 
     assert (
-        weight_baseline_service
-        .is_stable_window(
+        weight_baseline_service.is_stable_window(
             measurements,
         )
         is False
@@ -218,6 +217,7 @@ def test_is_stable_window_not_enough_buckets():
 # =====================================================
 # Fenêtre avec un bucket instable
 # =====================================================
+
 
 def test_is_stable_window_with_unstable_bucket():
     """
@@ -246,8 +246,7 @@ def test_is_stable_window_with_unstable_bucket():
     )
 
     assert (
-        weight_baseline_service
-        .is_stable_window(
+        weight_baseline_service.is_stable_window(
             measurements,
         )
         is False
@@ -257,6 +256,7 @@ def test_is_stable_window_with_unstable_bucket():
 # =====================================================
 # Poids moyen
 # =====================================================
+
 
 def test_compute_baseline_weight():
     """
@@ -289,11 +289,8 @@ def test_compute_baseline_weight():
         ),
     ]
 
-    result = (
-        weight_baseline_service
-        .compute_baseline_weight(
-            measurements,
-        )
+    result = weight_baseline_service.compute_baseline_weight(
+        measurements,
     )
 
     assert result == 51.0
@@ -302,6 +299,7 @@ def test_compute_baseline_weight():
 # =====================================================
 # Liste vide
 # =====================================================
+
 
 def test_compute_baseline_weight_empty():
     """
@@ -314,10 +312,8 @@ def test_compute_baseline_weight_empty():
     """
 
     try:
-
         (
-            weight_baseline_service
-            .compute_baseline_weight(
+            weight_baseline_service.compute_baseline_weight(
                 [],
             )
         )
@@ -325,7 +321,6 @@ def test_compute_baseline_weight_empty():
         assert False
 
     except ValueError:
-
         assert True
 
 
@@ -337,31 +332,26 @@ def test_detect_baseline_candidate_stable():
     =====================================================
     """
 
-    candidate = (
-        weight_baseline_service
-        .detect_baseline_candidate(
-            hive_level_id=1,
-            weights=[
-                50.00,
-                50.01,
-                49.99,
-                50.00,
-            ],
-            timestamps_minutes=[
-                0,
-                10,
-                20,
-                30,
-            ],
-        )
+    candidate = weight_baseline_service.detect_baseline_candidate(
+        hive_level_id=1,
+        weights=[
+            50.00,
+            50.01,
+            49.99,
+            50.00,
+        ],
+        timestamps_minutes=[
+            0,
+            10,
+            20,
+            30,
+        ],
     )
 
     assert candidate is not None
 
-    assert (
-        candidate.hive_level_id
-        == 1
-    )
+    assert candidate.hive_level_id == 1
+
 
 def test_detect_baseline_candidate_unstable():
     """
@@ -370,23 +360,20 @@ def test_detect_baseline_candidate_unstable():
     =====================================================
     """
 
-    candidate = (
-        weight_baseline_service
-        .detect_baseline_candidate(
-            hive_level_id=1,
-            weights=[
-                50,
-                60,
-                40,
-                55,
-            ],
-            timestamps_minutes=[
-                0,
-                10,
-                20,
-                30,
-            ],
-        )
+    candidate = weight_baseline_service.detect_baseline_candidate(
+        hive_level_id=1,
+        weights=[
+            50,
+            60,
+            40,
+            55,
+        ],
+        timestamps_minutes=[
+            0,
+            10,
+            20,
+            30,
+        ],
     )
 
     assert candidate is None
@@ -400,38 +387,36 @@ def test_detect_baseline_candidate_mean_weight():
     =====================================================
     """
 
-    candidate = (
-        weight_baseline_service
-        .detect_baseline_candidate(
-            hive_level_id=1,
-            weights=[
-                20.0,
-                20.01,
-                19.99,
-                20.00,
-            ],
-            timestamps_minutes=[
-                0,
-                10,
-                20,
-                30,
-            ],
-        )
+    candidate = weight_baseline_service.detect_baseline_candidate(
+        hive_level_id=1,
+        weights=[
+            20.0,
+            20.01,
+            19.99,
+            20.00,
+        ],
+        timestamps_minutes=[
+            0,
+            10,
+            20,
+            30,
+        ],
     )
-
-    assert candidate is not None
-
-    assert round(
-        candidate.baseline_offset_kg,
-        2,
-    ) == 20.00
 
     assert candidate is not None
 
     assert (
-        candidate.baseline_offset_kg
-        == 20
+        round(
+            candidate.baseline_offset_kg,
+            2,
+        )
+        == 20.00
     )
+
+    assert candidate is not None
+
+    assert candidate.baseline_offset_kg == 20
+
 
 def test_build_baseline():
     """
@@ -449,19 +434,10 @@ def test_build_baseline():
         algorithm_version="v1",
     )
 
-    baseline = (
-        weight_baseline_service
-        .build_baseline(
-            candidate,
-        )
+    baseline = weight_baseline_service.build_baseline(
+        candidate,
     )
 
-    assert (
-        baseline.hive_level_id
-        == 1
-    )
+    assert baseline.hive_level_id == 1
 
-    assert (
-        baseline.confidence
-        == 0.95
-    )
+    assert baseline.confidence == 0.95

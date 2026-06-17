@@ -62,7 +62,6 @@ def get_all(
     return query.all()
 
 
-
 def get_weight_measurements_for_hive_level(
     db: Session,
     hive_level_id: int,
@@ -79,8 +78,7 @@ def get_weight_measurements_for_hive_level(
             Measurement5m,
         )
         .filter(
-            Measurement5m.hive_level_id
-            == hive_level_id,
+            Measurement5m.hive_level_id == hive_level_id,
         )
         .filter(
             Measurement5m.type == "weight",
@@ -90,6 +88,7 @@ def get_weight_measurements_for_hive_level(
         )
         .all()
     )
+
 
 def get_latest_weight_measurements(
     db: Session,
@@ -119,8 +118,7 @@ def get_latest_weight_measurements(
             Measurement5m,
         )
         .filter(
-            Measurement5m.hive_level_id
-            == hive_level_id,
+            Measurement5m.hive_level_id == hive_level_id,
         )
         .filter(
             Measurement5m.type == "weight",
@@ -159,19 +157,16 @@ def get_between_dates(
             Measurement5m,
         )
         .filter(
-            Measurement5m.hive_level_id
-            == hive_level_id,
+            Measurement5m.hive_level_id == hive_level_id,
         )
         .filter(
             Measurement5m.type == "weight",
         )
         .filter(
-            Measurement5m.bucket_at
-            >= start_at,
+            Measurement5m.bucket_at >= start_at,
         )
         .filter(
-            Measurement5m.bucket_at
-            <= end_at,
+            Measurement5m.bucket_at <= end_at,
         )
         .order_by(
             Measurement5m.bucket_at.asc(),

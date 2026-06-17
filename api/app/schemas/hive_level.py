@@ -17,7 +17,8 @@ class HiveLevelRead(HiveLevelBase):
     id: int
 
     model_config = ConfigDict(from_attributes=True)
-    
+
+
 class HiveLevelSimple(BaseModel):
     id: int
     name: str

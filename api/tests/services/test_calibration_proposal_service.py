@@ -3,6 +3,7 @@ from app.services import (
 )
 from pytest import approx
 
+
 def test_propose_from_reference_event():
     """
     =====================================================
@@ -10,12 +11,9 @@ def test_propose_from_reference_event():
     =====================================================
     """
 
-    proposal = (
-        calibration_proposal_service
-        .propose_from_reference_event(
-            expected_delta_kg=1.0,
-            measured_delta_kg=0.95,
-        )
+    proposal = calibration_proposal_service.propose_from_reference_event(
+        expected_delta_kg=1.0,
+        measured_delta_kg=0.95,
     )
 
     assert round(
@@ -36,12 +34,9 @@ def test_propose_from_baseline_drift():
     =====================================================
     """
 
-    proposal = (
-        calibration_proposal_service
-        .propose_from_baseline_drift(
-            baseline_weight=50.0,
-            current_weight=51.2,
-        )
+    proposal = calibration_proposal_service.propose_from_baseline_drift(
+        baseline_weight=50.0,
+        current_weight=51.2,
     )
 
     assert proposal.offset_kg == approx(1.2)

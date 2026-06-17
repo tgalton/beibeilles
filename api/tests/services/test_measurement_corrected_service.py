@@ -18,14 +18,9 @@ from app.services import (
     measurement_corrected_service,
 )
 
-@patch(
-    "app.services.measurement_corrected_service."
-    "measurement_corrected_repository"
-)
-@patch(
-    "app.services.measurement_corrected_service."
-    "weight_calibration_service"
-)
+
+@patch("app.services.measurement_corrected_service.measurement_corrected_repository")
+@patch("app.services.measurement_corrected_service.weight_calibration_service")
 def test_create_from_measurement_5m(
     mock_calibration_service,
     mock_repository,
@@ -60,19 +55,14 @@ def test_create_from_measurement_5m(
         source=CalibrationSource.AUTO_DRIFT,
     )
 
-    mock_calibration_service.get_calibration_for_datetime.return_value = (
-        calibration
-    )
+    mock_calibration_service.get_calibration_for_datetime.return_value = calibration
 
-    mock_calibration_service.apply_calibration.return_value = (
-        51.0
-    )
+    mock_calibration_service.apply_calibration.return_value = 51.0
 
     db = Mock()
 
     (
-        measurement_corrected_service
-        .create_from_measurement_5m(
+        measurement_corrected_service.create_from_measurement_5m(
             db=db,
             measurement=measurement,
         )
@@ -81,15 +71,8 @@ def test_create_from_measurement_5m(
     mock_repository.create.assert_called_once()
 
 
-
-@patch(
-    "app.services.measurement_corrected_service."
-    "measurement_corrected_repository"
-)
-@patch(
-    "app.services.measurement_corrected_service."
-    "weight_calibration_service"
-)
+@patch("app.services.measurement_corrected_service.measurement_corrected_repository")
+@patch("app.services.measurement_corrected_service.weight_calibration_service")
 def test_create_from_measurement_5m_without_calibration(
     mock_calibration_service,
     mock_repository,
@@ -114,44 +97,26 @@ def test_create_from_measurement_5m_without_calibration(
         samples_count=10,
     )
 
-    mock_calibration_service.get_calibration_for_datetime.return_value = (
-        None
-    )
+    mock_calibration_service.get_calibration_for_datetime.return_value = None
 
-    mock_calibration_service.apply_calibration.return_value = (
-        50.0
-    )
+    mock_calibration_service.apply_calibration.return_value = 50.0
 
     db = Mock()
 
     (
-        measurement_corrected_service
-        .create_from_measurement_5m(
+        measurement_corrected_service.create_from_measurement_5m(
             db=db,
             measurement=measurement,
         )
     )
 
-    created_measurement = (
-        mock_repository.create
-        .call_args.kwargs["measurement"]
-    )
+    created_measurement = mock_repository.create.call_args.kwargs["measurement"]
 
-    assert (
-        created_measurement.calibration_id
-        is None
-    )
+    assert created_measurement.calibration_id is None
 
 
-
-@patch(
-    "app.services.measurement_corrected_service."
-    "measurement_corrected_repository"
-)
-@patch(
-    "app.services.measurement_corrected_service."
-    "weight_calibration_service"
-)
+@patch("app.services.measurement_corrected_service.measurement_corrected_repository")
+@patch("app.services.measurement_corrected_service.weight_calibration_service")
 def test_create_or_replace_updates_existing(
     mock_calibration,
     mock_repository,
@@ -186,29 +151,17 @@ def test_create_or_replace_updates_existing(
         corrected_weight_kg=48.0,
     )
 
-    mock_calibration.apply_calibration.return_value = (
-        49.0
+    mock_calibration.apply_calibration.return_value = 49.0
+
+    mock_calibration.get_calibration_for_datetime.return_value = calibration
+
+    mock_repository.get_by_measurement_5m_id.return_value = existing
+
+    measurement_corrected_service.create_or_replace_from_measurement_5m(
+        db=Mock(),
+        measurement=measurement,
     )
 
-    mock_calibration.get_calibration_for_datetime.return_value = (
-        calibration
-    )
-
-    mock_repository.get_by_measurement_5m_id.return_value = (
-        existing
-    )
-
-    weight = (
-        measurement_corrected_service
-        .create_or_replace_from_measurement_5m(
-            db=Mock(),
-            measurement=measurement,
-        )
-    )
-
-    assert (
-        existing.corrected_weight_kg
-        == 49.0
-    )
+    assert existing.corrected_weight_kg == 49.0
 
     mock_repository.update.assert_called_once()

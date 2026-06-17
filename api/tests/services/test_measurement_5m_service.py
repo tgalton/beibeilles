@@ -94,27 +94,12 @@ def test_get_measurements_5m_passes_filters(
 
     mock_get_all.assert_called_once()
 
-    assert (
-        mock_get_all.call_args.kwargs["measurement_type"]
-        == "temperature"
-    )
+    assert mock_get_all.call_args.kwargs["measurement_type"] == "temperature"
 
-    assert (
-        mock_get_all.call_args.kwargs["hive_level_id"]
-        == 5
-    )
+    assert mock_get_all.call_args.kwargs["hive_level_id"] == 5
 
-    assert (
-        mock_get_all.call_args.kwargs["sensor_device_id"]
-        == 9
-    )
+    assert mock_get_all.call_args.kwargs["sensor_device_id"] == 9
 
-    assert (
-        mock_get_all.call_args.kwargs["start_at"]
-        == start_at
-    )
+    assert mock_get_all.call_args.kwargs["start_at"] == start_at
 
-    assert (
-        mock_get_all.call_args.kwargs["end_at"]
-        == end_at
-    )
+    assert mock_get_all.call_args.kwargs["end_at"] == end_at

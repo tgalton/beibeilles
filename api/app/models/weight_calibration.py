@@ -48,6 +48,7 @@ from sqlalchemy.orm import relationship
 
 from app.database import Base
 
+
 class WeightCalibration(Base):
     __tablename__ = "weight_calibrations"
 
@@ -61,7 +62,7 @@ class WeightCalibration(Base):
         CheckConstraint(
             "gain > 0",
             name="ck_weight_calibration_gain_positive",
-        )
+        ),
     )
 
     id: Mapped[int] = mapped_column(
@@ -105,7 +106,6 @@ class WeightCalibration(Base):
         index=True,
     )
 
-    
     # =====================================================
     # Décalage appliqué.
     #
@@ -144,7 +144,6 @@ class WeightCalibration(Base):
     # auto_drift
     # reference_weight
     # =====================================================
-
 
     source: Mapped[CalibrationSource] = mapped_column(
         Enum(

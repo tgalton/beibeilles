@@ -36,7 +36,7 @@ class Hive(Base):
         back_populates="hive",
         cascade="all, delete-orphan",
     )
-    
+
     sensor_devices = relationship(
         "SensorDevice",
         back_populates="hive",

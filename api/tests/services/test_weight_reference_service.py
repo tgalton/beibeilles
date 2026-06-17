@@ -13,10 +13,7 @@ from app.services import (
 # =====================================================
 # Création d'un événement de référence
 # =====================================================
-@patch(
-    "app.services.weight_reference_service."
-    "weight_reference_event_repository"
-)
+@patch("app.services.weight_reference_service.weight_reference_event_repository")
 def test_create_reference_event(
     mock_repository,
 ):
@@ -34,21 +31,16 @@ def test_create_reference_event(
         measured_delta_kg=0.95,
     )
 
-    mock_repository.create.return_value = (
-        created_event
-    )
+    mock_repository.create.return_value = created_event
 
     db = Mock()
 
-    result = (
-        weight_reference_service
-        .create_reference_event(
-            db=db,
-            hive_level_id=1,
-            expected_delta_kg=1.0,
-            measured_delta_kg=0.95,
-            comment="Poids étalon 1kg",
-        )
+    result = weight_reference_service.create_reference_event(
+        db=db,
+        hive_level_id=1,
+        expected_delta_kg=1.0,
+        measured_delta_kg=0.95,
+        comment="Poids étalon 1kg",
     )
 
     assert result == created_event
@@ -73,12 +65,9 @@ def test_compute_gain_from_reference_gain_above_one():
     =====================================================
     """
 
-    gain = (
-        weight_reference_service
-        .compute_gain_from_reference(
-            expected_delta_kg=1.0,
-            measured_delta_kg=0.95,
-        )
+    gain = weight_reference_service.compute_gain_from_reference(
+        expected_delta_kg=1.0,
+        measured_delta_kg=0.95,
     )
 
     assert round(gain, 6) == round(
@@ -104,12 +93,9 @@ def test_compute_gain_from_reference_gain_below_one():
     =====================================================
     """
 
-    gain = (
-        weight_reference_service
-        .compute_gain_from_reference(
-            expected_delta_kg=1.0,
-            measured_delta_kg=1.05,
-        )
+    gain = weight_reference_service.compute_gain_from_reference(
+        expected_delta_kg=1.0,
+        measured_delta_kg=1.05,
     )
 
     assert round(gain, 6) == round(
@@ -132,12 +118,9 @@ def test_compute_gain_from_reference_perfect():
     =====================================================
     """
 
-    gain = (
-        weight_reference_service
-        .compute_gain_from_reference(
-            expected_delta_kg=1.0,
-            measured_delta_kg=1.0,
-        )
+    gain = weight_reference_service.compute_gain_from_reference(
+        expected_delta_kg=1.0,
+        measured_delta_kg=1.0,
     )
 
     assert gain == 1.0
@@ -157,10 +140,8 @@ def test_compute_gain_from_reference_zero_measurement():
     """
 
     try:
-
         (
-            weight_reference_service
-            .compute_gain_from_reference(
+            weight_reference_service.compute_gain_from_reference(
                 expected_delta_kg=1.0,
                 measured_delta_kg=0.0,
             )
@@ -169,17 +150,13 @@ def test_compute_gain_from_reference_zero_measurement():
         assert False
 
     except ValueError:
-
         assert True
 
 
 # =====================================================
 # Dernier événement disponible
 # =====================================================
-@patch(
-    "app.services.weight_reference_service."
-    "weight_reference_event_repository"
-)
+@patch("app.services.weight_reference_service.weight_reference_event_repository")
 def test_get_latest_reference_event_found(
     mock_repository,
 ):
@@ -197,18 +174,13 @@ def test_get_latest_reference_event_found(
         measured_delta_kg=0.97,
     )
 
-    mock_repository.get_latest_for_hive_level.return_value = (
-        event
-    )
+    mock_repository.get_latest_for_hive_level.return_value = event
 
     db = Mock()
 
-    result = (
-        weight_reference_service
-        .get_latest_reference_event(
-            db=db,
-            hive_level_id=1,
-        )
+    result = weight_reference_service.get_latest_reference_event(
+        db=db,
+        hive_level_id=1,
     )
 
     assert result == event
@@ -217,10 +189,7 @@ def test_get_latest_reference_event_found(
 # =====================================================
 # Aucun événement disponible
 # =====================================================
-@patch(
-    "app.services.weight_reference_service."
-    "weight_reference_event_repository"
-)
+@patch("app.services.weight_reference_service.weight_reference_event_repository")
 def test_get_latest_reference_event_none(
     mock_repository,
 ):
@@ -231,18 +200,13 @@ def test_get_latest_reference_event_none(
     =====================================================
     """
 
-    mock_repository.get_latest_for_hive_level.return_value = (
-        None
-    )
+    mock_repository.get_latest_for_hive_level.return_value = None
 
     db = Mock()
 
-    result = (
-        weight_reference_service
-        .get_latest_reference_event(
-            db=db,
-            hive_level_id=1,
-        )
+    result = weight_reference_service.get_latest_reference_event(
+        db=db,
+        hive_level_id=1,
     )
 
     assert result is None

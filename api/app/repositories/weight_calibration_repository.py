@@ -96,8 +96,7 @@ def get_current_for_hive_level(
     return (
         db.query(WeightCalibration)
         .filter(
-            WeightCalibration.hive_level_id
-            == hive_level_id,
+            WeightCalibration.hive_level_id == hive_level_id,
         )
         .filter(
             WeightCalibration.valid_to.is_(None),
@@ -166,22 +165,14 @@ def get_for_datetime(
     return (
         db.query(WeightCalibration)
         .filter(
-            WeightCalibration.hive_level_id
-            == hive_level_id,
+            WeightCalibration.hive_level_id == hive_level_id,
         )
         .filter(
-            WeightCalibration.valid_from
-            <= measured_at,
+            WeightCalibration.valid_from <= measured_at,
         )
         .filter(
-            (
-                WeightCalibration.valid_to.is_(None)
-            )
-            |
-            (
-                WeightCalibration.valid_to
-                > measured_at
-            )
+            (WeightCalibration.valid_to.is_(None))
+            | (WeightCalibration.valid_to > measured_at)
         )
         .first()
     )

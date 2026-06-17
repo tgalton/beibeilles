@@ -51,41 +51,29 @@ def process_stable_window(
     =====================================================
     """
 
-    candidate = (
-        weight_baseline_service
-        .detect_baseline_candidate(
-            hive_level_id=hive_level_id,
-            weights=weights,
-            timestamps_minutes=timestamps_minutes,
-        )
+    candidate = weight_baseline_service.detect_baseline_candidate(
+        hive_level_id=hive_level_id,
+        weights=weights,
+        timestamps_minutes=timestamps_minutes,
     )
 
     if candidate is None:
         return None
 
-    current_baseline = (
-        weight_baseline_service
-        .build_baseline(
-            candidate=candidate,
-        )
+    current_baseline = weight_baseline_service.build_baseline(
+        candidate=candidate,
     )
 
-    proposal = (
-        auto_recalibration_service
-        .propose_from_baseline_drift(
-            reference_baseline=reference_baseline,
-            current_baseline=current_baseline,
-        )
+    proposal = auto_recalibration_service.propose_from_baseline_drift(
+        reference_baseline=reference_baseline,
+        current_baseline=current_baseline,
     )
 
     if proposal is None:
         return None
 
-    return (
-        auto_recalibration_service
-        .create_auto_calibration(
-            db=db,
-            hive_level_id=hive_level_id,
-            proposal=proposal,
-        )
+    return auto_recalibration_service.create_auto_calibration(
+        db=db,
+        hive_level_id=hive_level_id,
+        proposal=proposal,
     )

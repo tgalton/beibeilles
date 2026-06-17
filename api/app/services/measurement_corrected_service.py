@@ -18,6 +18,7 @@ from app.services import (
 
 # Ce service ne sère pas à faire des batch mais des modification unitaire des mesures via calibration
 
+
 def create_from_measurement_5m(
     db: Session,
     measurement: Measurement5m,
@@ -28,21 +29,15 @@ def create_from_measurement_5m(
     =====================================================
     """
 
-    corrected = (
-        build_from_measurement_5m(
-            db=db,
-            measurement=measurement,
-        )
+    corrected = build_from_measurement_5m(
+        db=db,
+        measurement=measurement,
     )
 
-    return (
-        measurement_corrected_repository
-        .create(
-            db=db,
-            measurement=corrected,
-        )
+    return measurement_corrected_repository.create(
+        db=db,
+        measurement=corrected,
     )
-
 
 
 def create_or_replace_from_measurement_5m(
@@ -66,23 +61,17 @@ def create_or_replace_from_measurement_5m(
     =====================================================
     """
 
-    corrected_weight = (
-        weight_calibration_service
-        .apply_calibration(
-            db=db,
-            hive_level_id=measurement.hive_level_id,
-            raw_weight=measurement.avg_value,
-            measured_at=measurement.bucket_at,
-        )
+    corrected_weight = weight_calibration_service.apply_calibration(
+        db=db,
+        hive_level_id=measurement.hive_level_id,
+        raw_weight=measurement.avg_value,
+        measured_at=measurement.bucket_at,
     )
 
-    calibration = (
-        weight_calibration_service
-        .get_calibration_for_datetime(
-            db=db,
-            hive_level_id=measurement.hive_level_id,
-            measured_at=measurement.bucket_at,
-        )
+    calibration = weight_calibration_service.get_calibration_for_datetime(
+        db=db,
+        hive_level_id=measurement.hive_level_id,
+        measured_at=measurement.bucket_at,
     )
 
     if calibration is None:
@@ -90,16 +79,12 @@ def create_or_replace_from_measurement_5m(
             "No calibration found",
         )
 
-    existing = (
-        measurement_corrected_repository
-        .get_by_measurement_5m_id(
-            db=db,
-            measurement_5m_id=measurement.id,
-        )
+    existing = measurement_corrected_repository.get_by_measurement_5m_id(
+        db=db,
+        measurement_5m_id=measurement.id,
     )
 
     if existing is None:
-
         corrected = MeasurementCorrected(
             measurement_5m_id=measurement.id,
             calibration_id=calibration.id,
@@ -107,30 +92,20 @@ def create_or_replace_from_measurement_5m(
             corrected_weight_kg=corrected_weight,
         )
 
-        return (
-            measurement_corrected_repository
-            .create(
-                db=db,
-                measurement=corrected,
-            )
+        return measurement_corrected_repository.create(
+            db=db,
+            measurement=corrected,
         )
 
     existing.calibration_id = calibration.id
 
-    existing.raw_weight_kg = (
-        measurement.avg_value
-    )
+    existing.raw_weight_kg = measurement.avg_value
 
-    existing.corrected_weight_kg = (
-        corrected_weight
-    )
+    existing.corrected_weight_kg = corrected_weight
 
-    return (
-        measurement_corrected_repository
-        .update(
-            db=db,
-            measurement=existing,
-        )
+    return measurement_corrected_repository.update(
+        db=db,
+        measurement=existing,
     )
 
 
@@ -152,33 +127,23 @@ def build_from_measurement_5m(
     =====================================================
     """
 
-    calibration = (
-        weight_calibration_service
-        .get_calibration_for_datetime(
-            db=db,
-            hive_level_id=measurement.hive_level_id,
-            measured_at=measurement.bucket_at,
-        )
+    calibration = weight_calibration_service.get_calibration_for_datetime(
+        db=db,
+        hive_level_id=measurement.hive_level_id,
+        measured_at=measurement.bucket_at,
     )
 
     if calibration is None:
-
-        corrected_weight = (
-            measurement.avg_value
-        )
+        corrected_weight = measurement.avg_value
 
         calibration_id = None
 
     else:
-
-        corrected_weight = (
-            weight_calibration_service
-            .apply_calibration(
-                db=db,
-                hive_level_id=measurement.hive_level_id,
-                raw_weight=measurement.avg_value,
-                measured_at=measurement.bucket_at,
-            )
+        corrected_weight = weight_calibration_service.apply_calibration(
+            db=db,
+            hive_level_id=measurement.hive_level_id,
+            raw_weight=measurement.avg_value,
+            measured_at=measurement.bucket_at,
         )
 
         calibration_id = calibration.id

@@ -97,10 +97,7 @@ def test_get_hive_level_passes_id(
 
     mock_get.assert_called_once()
 
-    assert (
-        mock_get.call_args.kwargs["level_id"]
-        == 123
-    )
+    assert mock_get.call_args.kwargs["level_id"] == 123
 
 
 # =========================================================
@@ -151,7 +148,4 @@ def test_get_hive_level_not_found(
 
     assert response.status_code == 404
 
-    assert (
-        response.json()["detail"]
-        == "Hive level not found"
-    )
+    assert response.json()["detail"] == "Hive level not found"

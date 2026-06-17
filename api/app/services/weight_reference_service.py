@@ -81,12 +81,9 @@ def create_reference_event(
         comment=comment,
     )
 
-    return (
-        weight_reference_event_repository
-        .create(
-            db=db,
-            event=event,
-        )
+    return weight_reference_event_repository.create(
+        db=db,
+        event=event,
     )
 
 
@@ -137,10 +134,7 @@ def compute_gain_from_reference(
             "measured_delta_kg cannot be zero",
         )
 
-    return (
-        expected_delta_kg
-        / measured_delta_kg
-    )
+    return expected_delta_kg / measured_delta_kg
 
 
 def is_reference_event_valid(
@@ -173,11 +167,7 @@ def is_reference_event_valid(
     =====================================================
     """
 
-    return (
-        expected_delta_kg
-        * measured_delta_kg
-    ) > 0
-
+    return (expected_delta_kg * measured_delta_kg) > 0
 
 
 def get_latest_reference_event(
@@ -217,10 +207,7 @@ def get_latest_reference_event(
     =====================================================
     """
 
-    return (
-        weight_reference_event_repository
-        .get_latest_for_hive_level(
-            db=db,
-            hive_level_id=hive_level_id,
-        )
+    return weight_reference_event_repository.get_latest_for_hive_level(
+        db=db,
+        hive_level_id=hive_level_id,
     )

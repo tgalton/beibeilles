@@ -57,10 +57,7 @@ def analyze_stability(
         weights,
     )
 
-    duration_minutes = int(
-        max(timestamps_minutes)
-        - min(timestamps_minutes)
-    )
+    duration_minutes = int(max(timestamps_minutes) - min(timestamps_minutes))
 
     confidence = compute_confidence(
         standard_deviation_kg=variance_value,
@@ -69,12 +66,9 @@ def analyze_stability(
     )
 
     is_stable = (
-        variance_value
-        <= MAX_VARIANCE_KG
-        and abs(slope)
-        <= MAX_SLOPE_KG_PER_HOUR
-        and duration_minutes
-        >= MIN_DURATION_MINUTES
+        variance_value <= MAX_VARIANCE_KG
+        and abs(slope) <= MAX_SLOPE_KG_PER_HOUR
+        and duration_minutes >= MIN_DURATION_MINUTES
     )
 
     return StabilityAnalysisDTO(
@@ -130,12 +124,7 @@ def compute_linear_slope(
     mean_y = sum(y_values) / n
 
     numerator = sum(
-        (
-            x - mean_x
-        )
-        * (
-            y - mean_y
-        )
+        (x - mean_x) * (y - mean_y)
         for x, y in zip(
             x_values,
             y_values,
@@ -143,26 +132,15 @@ def compute_linear_slope(
         )
     )
 
-    denominator = sum(
-        (
-            x - mean_x
-        ) ** 2
-        for x in x_values
-    )
+    denominator = sum((x - mean_x) ** 2 for x in x_values)
 
     if denominator == 0:
         return 0.0
 
-    slope_per_minute = (
-        numerator
-        / denominator
-    )
+    slope_per_minute = numerator / denominator
 
-    return (
-        slope_per_minute
-        * 60
-    )
-    
+    return slope_per_minute * 60
+
 
 def compute_confidence(
     standard_deviation_kg: float,
@@ -183,32 +161,20 @@ def compute_confidence(
 
     variance_score = max(
         0.0,
-        1.0 - (
-            standard_deviation_kg
-            / MAX_VARIANCE_KG
-        ),
+        1.0 - (standard_deviation_kg / MAX_VARIANCE_KG),
     )
 
     slope_score = max(
         0.0,
-        1.0 - (
-            slope_kg_per_hour
-            / MAX_SLOPE_KG_PER_HOUR
-        ),
+        1.0 - (slope_kg_per_hour / MAX_SLOPE_KG_PER_HOUR),
     )
 
     duration_score = min(
         1.0,
-        duration_minutes
-        / MIN_DURATION_MINUTES,
+        duration_minutes / MIN_DURATION_MINUTES,
     )
 
     return round(
-        (
-            variance_score
-            + slope_score
-            + duration_score
-        )
-        / 3,
+        (variance_score + slope_score + duration_score) / 3,
         4,
     )

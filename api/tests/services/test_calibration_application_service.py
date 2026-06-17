@@ -10,10 +10,7 @@ from app.services import (
 )
 
 
-@patch(
-    "app.services.calibration_application_service."
-    "weight_calibration_repository"
-)
+@patch("app.services.calibration_application_service.weight_calibration_repository")
 def test_apply_proposal(
     mock_repository,
 ):

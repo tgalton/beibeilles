@@ -85,7 +85,6 @@ def aggregate_measurements_5m(
     # on commence au plus ancien RAW.
     # =====================================================
     if last_bucket is None:
-
         oldest_raw = db.query(
             func.min(MeasurementRaw.measured_at),
         ).scalar()
@@ -97,7 +96,6 @@ def aggregate_measurements_5m(
         bucket = floor_to_5_minutes(oldest_raw)
 
     else:
-
         bucket = last_bucket + timedelta(
             minutes=BUCKET_MINUTES,
         )
@@ -106,7 +104,6 @@ def aggregate_measurements_5m(
     # Boucle bucket par bucket
     # =====================================================
     while bucket < current_bucket:
-
         bucket_end = bucket + timedelta(
             minutes=BUCKET_MINUTES,
         )
@@ -126,25 +123,17 @@ def aggregate_measurements_5m(
         results = (
             db.query(
                 MeasurementRaw.type,
-
                 SensorDevice.hive_id,
-
                 MeasurementRaw.sensor_device_id,
-
                 MeasurementRaw.hive_level_id,
-
                 func.avg(MeasurementRaw.value),
-
                 func.min(MeasurementRaw.value),
-
                 func.max(MeasurementRaw.value),
-
                 func.count(MeasurementRaw.id),
             )
             .join(
                 SensorDevice,
-                SensorDevice.id
-                == MeasurementRaw.sensor_device_id,
+                SensorDevice.id == MeasurementRaw.sensor_device_id,
             )
             .filter(
                 MeasurementRaw.measured_at >= bucket,
@@ -154,36 +143,23 @@ def aggregate_measurements_5m(
             )
             .group_by(
                 MeasurementRaw.type,
-
                 SensorDevice.hive_id,
-
                 MeasurementRaw.sensor_device_id,
-
                 MeasurementRaw.hive_level_id,
             )
             .all()
         )
 
         for result in results:
-
             agg = Measurement5m(
-
                 bucket_at=bucket,
-
                 type=result[0],
-
                 hive_id=result[1],
-
                 sensor_device_id=result[2],
-
                 hive_level_id=result[3],
-
                 avg_value=result[4],
-
                 min_value=result[5],
-
                 max_value=result[6],
-
                 samples_count=result[7],
             )
 

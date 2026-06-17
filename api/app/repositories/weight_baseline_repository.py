@@ -64,8 +64,7 @@ def get_latest_for_hive_level(
     return (
         db.query(WeightBaseline)
         .filter(
-            WeightBaseline.hive_level_id
-            == hive_level_id,
+            WeightBaseline.hive_level_id == hive_level_id,
         )
         .order_by(
             WeightBaseline.computed_at.desc(),
@@ -94,8 +93,7 @@ def get_recent_for_hive_level(
     return (
         db.query(WeightBaseline)
         .filter(
-            WeightBaseline.hive_level_id
-            == hive_level_id,
+            WeightBaseline.hive_level_id == hive_level_id,
         )
         .order_by(
             WeightBaseline.computed_at.desc(),
@@ -103,6 +101,7 @@ def get_recent_for_hive_level(
         .limit(limit)
         .all()
     )
+
 
 def get_previous_baseline(
     db: Session,
@@ -120,12 +119,10 @@ def get_previous_baseline(
             WeightBaseline,
         )
         .filter(
-            WeightBaseline.hive_level_id
-            == hive_level_id,
+            WeightBaseline.hive_level_id == hive_level_id,
         )
         .filter(
-            WeightBaseline.id
-            < baseline_id,
+            WeightBaseline.id < baseline_id,
         )
         .order_by(
             WeightBaseline.id.desc(),

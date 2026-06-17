@@ -20,7 +20,6 @@ router = APIRouter(
 )
 
 
-
 @router.get("")
 def get_corrected_measurements(
     hive_level_id: int,
@@ -37,14 +36,11 @@ def get_corrected_measurements(
     =====================================================
     """
 
-    return (
-        corrected_weight_query_service
-        .get_weight_history(
-            db=db,
-            hive_level_id=hive_level_id,
-            start_at=start_at,
-            end_at=end_at,
-        )
+    return corrected_weight_query_service.get_weight_history(
+        db=db,
+        hive_level_id=hive_level_id,
+        start_at=start_at,
+        end_at=end_at,
     )
 
 
@@ -59,10 +55,7 @@ def get_latest_corrected_weight(
     =====================================================
     """
 
-    return (
-        corrected_weight_query_service
-        .get_latest_weight(
-            db=db,
-            hive_level_id=hive_level_id,
-        )
+    return corrected_weight_query_service.get_latest_weight(
+        db=db,
+        hive_level_id=hive_level_id,
     )

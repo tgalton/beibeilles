@@ -66,14 +66,9 @@ def delete_old_raw_measurements(
     # =====================================================
     # Calcul de la date limite
     # =====================================================
-    cutoff_date = (
-        datetime.now(UTC)
-        - timedelta(days=retention_days)
-    )
+    cutoff_date = datetime.now(UTC) - timedelta(days=retention_days)
 
-    print(
-        f"[RAW CLEANUP] cutoff_date={cutoff_date.isoformat()}"
-    )
+    print(f"[RAW CLEANUP] cutoff_date={cutoff_date.isoformat()}")
 
     # =====================================================
     # Requête DELETE SQLAlchemy moderne
@@ -81,11 +76,8 @@ def delete_old_raw_measurements(
     # synchronize_session=False :
     # beaucoup plus rapide pour les bulk delete
     # =====================================================
-    statement = (
-        delete(MeasurementRaw)
-        .where(
-            MeasurementRaw.measured_at < cutoff_date,
-        )
+    statement = delete(MeasurementRaw).where(
+        MeasurementRaw.measured_at < cutoff_date,
     )
 
     result = db.execute(statement)
@@ -94,9 +86,7 @@ def delete_old_raw_measurements(
 
     deleted_count = result.rowcount or 0
 
-    print(
-        f"[RAW CLEANUP] deleted_rows={deleted_count}"
-    )
+    print(f"[RAW CLEANUP] deleted_rows={deleted_count}")
 
     return deleted_count
 
@@ -122,33 +112,21 @@ def main() -> None:
     db = SessionLocal()
 
     try:
+        print("[RAW CLEANUP] starting cleanup...")
 
-        print(
-            "[RAW CLEANUP] starting cleanup..."
+        deleted_count = delete_old_raw_measurements(
+            db=db,
+            retention_days=7,
         )
 
-        deleted_count = (
-            delete_old_raw_measurements(
-                db=db,
-                retention_days=7,
-            )
-        )
-
-        print(
-            f"[RAW CLEANUP] completed "
-            f"(deleted={deleted_count})"
-        )
+        print(f"[RAW CLEANUP] completed (deleted={deleted_count})")
 
     except Exception as e:
-
-        print(
-            f"[RAW CLEANUP] ERROR: {e}"
-        )
+        print(f"[RAW CLEANUP] ERROR: {e}")
 
         raise
 
     finally:
-
         db.close()
 
 

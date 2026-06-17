@@ -19,6 +19,7 @@ def create(
 
     return event
 
+
 # get_by_id()
 def get_by_id(
     db: Session,
@@ -35,6 +36,7 @@ def get_by_id(
         .first()
     )
 
+
 # Récupérer la dernière référence
 def get_latest_for_hive_level(
     db: Session,
@@ -50,8 +52,7 @@ def get_latest_for_hive_level(
     return (
         db.query(WeightReferenceEvent)
         .filter(
-            WeightReferenceEvent.hive_level_id
-            == hive_level_id,
+            WeightReferenceEvent.hive_level_id == hive_level_id,
         )
         .order_by(
             WeightReferenceEvent.created_at.desc(),

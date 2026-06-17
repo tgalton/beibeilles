@@ -166,6 +166,24 @@ pytest tests/routers/test_measurement_raw.py -v
 docker inspect beibeilles-timescaledb-1 | grep POSTGRES
 ```
 
+**Faire passer le linter ruff**
+
+```bash
+ruff check .
+```
+
+**Faire fixer via le linter ruff**
+
+```bash
+ruff check . --fix
+```
+
+**Faire formater via le linter ruff**
+
+```bash
+ruff format .
+```
+
 # Plateforme de supervision apicole connectée
 
 ## Objectif du projet

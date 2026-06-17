@@ -22,6 +22,7 @@ class HiveRead(HiveBase):
     levels: list[HiveLevelSimple] = []
 
     model_config = ConfigDict(from_attributes=True)
-    
+
+
 class HiveUpdate(BaseModel):
     name: str

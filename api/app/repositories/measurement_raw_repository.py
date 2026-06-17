@@ -64,33 +64,26 @@ def get_all(
     query = db.query(MeasurementRaw)
 
     if measurement_type is not None:
-
         query = query.filter(
             MeasurementRaw.type == measurement_type,
         )
 
     if hive_level_id is not None:
-
         query = query.filter(
-            MeasurementRaw.hive_level_id
-            == hive_level_id,
+            MeasurementRaw.hive_level_id == hive_level_id,
         )
 
     if sensor_device_id is not None:
-
         query = query.filter(
-            MeasurementRaw.sensor_device_id
-            == sensor_device_id,
+            MeasurementRaw.sensor_device_id == sensor_device_id,
         )
 
     if start_at is not None:
-
         query = query.filter(
             MeasurementRaw.measured_at >= start_at,
         )
 
     if end_at is not None:
-
         query = query.filter(
             MeasurementRaw.measured_at <= end_at,
         )

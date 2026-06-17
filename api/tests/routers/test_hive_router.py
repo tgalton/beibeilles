@@ -61,10 +61,7 @@ def test_create_hive(
 
     assert response.status_code == 200
 
-    assert (
-        response.json()["name"]
-        == "Ruche Alpha"
-    )
+    assert response.json()["name"] == "Ruche Alpha"
 
 
 # =========================================================
@@ -129,10 +126,7 @@ def test_get_hive_by_id_passes_id(
 
     mock_get.assert_called_once()
 
-    assert (
-        mock_get.call_args.kwargs["hive_id"]
-        == 42
-    )
+    assert mock_get.call_args.kwargs["hive_id"] == 42
 
 
 # =========================================================
@@ -155,10 +149,7 @@ def test_delete_hive(
 
     assert response.status_code == 200
 
-    assert (
-        response.json()["message"]
-        == "Hive deleted"
-    )
+    assert response.json()["message"] == "Hive deleted"
 
 
 # =========================================================
@@ -179,10 +170,7 @@ def test_delete_hive_passes_id(
         "/hives/123",
     )
 
-    assert (
-        mock_delete.call_args.kwargs["hive_id"]
-        == 123
-    )
+    assert mock_delete.call_args.kwargs["hive_id"] == 123
 
 
 # =========================================================
@@ -209,10 +197,7 @@ def test_update_hive(
 
     assert response.status_code == 200
 
-    assert (
-        response.json()["name"]
-        == "Ruche Beta"
-    )
+    assert response.json()["name"] == "Ruche Beta"
 
 
 # =========================================================
@@ -236,10 +221,7 @@ def test_update_hive_passes_parameters(
 
     mock_update.assert_called_once()
 
-    assert (
-        mock_update.call_args.kwargs["hive_id"]
-        == 5
-    )
+    assert mock_update.call_args.kwargs["hive_id"] == 5
 
 
 # =========================================================
@@ -272,7 +254,4 @@ def test_get_hive_not_found(
 
     assert response.status_code == 404
 
-    assert (
-        response.json()["detail"]
-        == "Hive not found"
-    )
+    assert response.json()["detail"] == "Hive not found"

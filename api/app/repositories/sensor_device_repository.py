@@ -34,8 +34,7 @@ def get_by_serial(
     return (
         db.query(SensorDevice)
         .filter(
-            SensorDevice.serial_number
-            == serial_number,
+            SensorDevice.serial_number == serial_number,
         )
         .first()
     )
@@ -74,7 +73,6 @@ def get_or_create_by_serial(
     # Device déjà connu
     # =====================================================
     if device is not None:
-
         device.last_seen_at = datetime.now(UTC)
 
         db.commit()
@@ -87,15 +85,10 @@ def get_or_create_by_serial(
     # Nouveau device détecté
     # =====================================================
     device = SensorDevice(
-
         name=f"Auto device {serial_number}",
-
         serial_number=serial_number,
-
         is_registered=False,
-
         created_at=datetime.now(UTC),
-
         last_seen_at=datetime.now(UTC),
     )
 

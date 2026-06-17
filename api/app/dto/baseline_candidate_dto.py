@@ -3,7 +3,6 @@ from dataclasses import dataclass
 
 @dataclass(slots=True)
 class BaselineCandidateDTO:
-
     hive_level_id: int
 
     baseline_offset_kg: float

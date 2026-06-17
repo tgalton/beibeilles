@@ -53,17 +53,11 @@ def create_manual_calibration(
 
     calibration = WeightCalibration(
         hive_level_id=payload.hive_level_id,
-
         valid_from=now,
-
         valid_to=None,
-
         offset_kg=payload.offset_kg,
-
         gain=payload.gain,
-
         source=CalibrationSource.MANUAL,
-
         algorithm_version=None,
     )
 
@@ -86,13 +80,11 @@ def get_current_calibration(
     =========================================================
     """
 
-    return (
-        weight_calibration_repository
-        .get_current_for_hive_level(
-            db=db,
-            hive_level_id=hive_level_id,
-        )
+    return weight_calibration_repository.get_current_for_hive_level(
+        db=db,
+        hive_level_id=hive_level_id,
     )
+
 
 def apply_calibration(
     db: Session,
@@ -121,25 +113,16 @@ def apply_calibration(
     =========================================================
     """
 
-    calibration = (
-        weight_calibration_repository
-        .get_for_datetime(
-            db=db,
-            hive_level_id=hive_level_id,
-            measured_at=measured_at,
-        )
+    calibration = weight_calibration_repository.get_for_datetime(
+        db=db,
+        hive_level_id=hive_level_id,
+        measured_at=measured_at,
     )
 
     if calibration is None:
         return raw_weight
 
-    return (
-        (
-            raw_weight
-            - calibration.offset_kg
-        )
-        * calibration.gain
-    )
+    return (raw_weight - calibration.offset_kg) * calibration.gain
 
 
 def create_calibration_from_reference_event(
@@ -181,30 +164,16 @@ def create_calibration_from_reference_event(
     """
 
     if not (
-        weight_reference_service
-        .is_reference_event_valid(
-            expected_delta_kg=(
-                reference_event.expected_delta_kg
-            ),
-            measured_delta_kg=(
-                reference_event.measured_delta_kg
-            ),
+        weight_reference_service.is_reference_event_valid(
+            expected_delta_kg=(reference_event.expected_delta_kg),
+            measured_delta_kg=(reference_event.measured_delta_kg),
         )
     ):
-        raise ValueError(
-            "Invalid reference event"
-        )
+        raise ValueError("Invalid reference event")
 
-    gain = (
-        weight_reference_service
-        .compute_gain_from_reference(
-            expected_delta_kg=(
-                reference_event.expected_delta_kg
-            ),
-            measured_delta_kg=(
-                reference_event.measured_delta_kg
-            ),
-        )
+    gain = weight_reference_service.compute_gain_from_reference(
+        expected_delta_kg=(reference_event.expected_delta_kg),
+        measured_delta_kg=(reference_event.measured_delta_kg),
     )
 
     now = datetime.now(UTC)
@@ -213,47 +182,34 @@ def create_calibration_from_reference_event(
     # Ferme calibration actuelle
     # =================================================
 
-    weight_calibration_repository\
-        .close_current_calibration(
-            db=db,
-            hive_level_id=(
-                reference_event.hive_level_id
-            ),
-            closed_at=now,
-        )
+    weight_calibration_repository.close_current_calibration(
+        db=db,
+        hive_level_id=(reference_event.hive_level_id),
+        closed_at=now,
+    )
 
     # =================================================
     # Nouvelle calibration
     # =================================================
 
     calibration = WeightCalibration(
-        hive_level_id=(
-            reference_event.hive_level_id
-        ),
+        hive_level_id=(reference_event.hive_level_id),
         valid_from=now,
         valid_to=None,
-
         # -----------------------------------------
         # Le poids étalon permet de recalculer
         # le gain mais pas le zéro.
         # -----------------------------------------
         offset_kg=0.0,
-
         gain=gain,
-
-        source=(
-            CalibrationSource
-            .REFERENCE_WEIGHT
-        ),
+        source=(CalibrationSource.REFERENCE_WEIGHT),
     )
 
-    return (
-        weight_calibration_repository
-        .create(
-            db=db,
-            calibration=calibration,
-        )
+    return weight_calibration_repository.create(
+        db=db,
+        calibration=calibration,
     )
+
 
 def get_calibration_for_datetime(
     db: Session,
@@ -267,11 +223,8 @@ def get_calibration_for_datetime(
     =====================================================
     """
 
-    return (
-        weight_calibration_repository
-        .get_for_datetime(
-            db=db,
-            hive_level_id=hive_level_id,
-            measured_at=measured_at,
-        )
+    return weight_calibration_repository.get_for_datetime(
+        db=db,
+        hive_level_id=hive_level_id,
+        measured_at=measured_at,
     )
