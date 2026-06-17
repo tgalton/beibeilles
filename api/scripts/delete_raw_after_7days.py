@@ -80,7 +80,7 @@ def delete_old_raw_measurements(
         MeasurementRaw.measured_at < cutoff_date,
     )
 
-    result = db.execute(statement)
+    db.execute(statement)
 
     db.commit()
 

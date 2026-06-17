@@ -3,6 +3,7 @@ from app.services import (
 )
 import pytest
 
+
 def test_compute_variance_flat():
     """
     =====================================================

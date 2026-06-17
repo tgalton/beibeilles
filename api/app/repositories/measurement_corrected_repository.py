@@ -59,9 +59,7 @@ def get_by_measurement_5m_id(
 
     return (
         db.query(MeasurementCorrected)
-        .filter(
-            MeasurementCorrected.measurement_5m_id == measurement_5m_id
-        )
+        .filter(MeasurementCorrected.measurement_5m_id == measurement_5m_id)
         .first()
     )
 

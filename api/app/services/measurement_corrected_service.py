@@ -73,15 +73,10 @@ def create_or_replace_from_measurement_5m(
         measured_at=measurement.bucket_at,
     )
 
-
-
-    calibration = (
-        weight_calibration_service
-        .get_calibration_for_datetime(
-            db=db,
-            hive_level_id=measurement.hive_level_id,
-            measured_at=measurement.bucket_at,
-        )
+    calibration = weight_calibration_service.get_calibration_for_datetime(
+        db=db,
+        hive_level_id=measurement.hive_level_id,
+        measured_at=measurement.bucket_at,
     )
 
     if calibration is None:

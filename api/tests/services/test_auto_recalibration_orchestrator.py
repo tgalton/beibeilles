@@ -28,8 +28,6 @@ def test_run_not_enough_measurements(
     )
 
 
-
-
 @patch("app.services.auto_recalibration_orchestrator.weight_baseline_service")
 @patch("app.services.auto_recalibration_orchestrator.measurement_5m_repository")
 def test_run_unstable_window(
@@ -55,8 +53,6 @@ def test_run_unstable_window(
     )
 
     mock_baseline_service.save_baseline.assert_not_called()
-
-
 
 
 # @patch(
