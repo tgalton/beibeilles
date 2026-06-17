@@ -60,3 +60,121 @@ def get_all(
     )
 
     return query.all()
+
+
+
+def get_weight_measurements_for_hive_level(
+    db: Session,
+    hive_level_id: int,
+) -> list[Measurement5m]:
+    """
+    =====================================================
+    Retourne tous les buckets poids
+    d'un niveau de ruche.
+    =====================================================
+    """
+
+    return (
+        db.query(
+            Measurement5m,
+        )
+        .filter(
+            Measurement5m.hive_level_id
+            == hive_level_id,
+        )
+        .filter(
+            Measurement5m.type == "weight",
+        )
+        .order_by(
+            Measurement5m.bucket_at.asc(),
+        )
+        .all()
+    )
+
+def get_latest_weight_measurements(
+    db: Session,
+    hive_level_id: int,
+    limit: int,
+) -> list[Measurement5m]:
+    """
+    =====================================================
+    Retourne les N derniers buckets poids.
+
+    IMPORTANT :
+
+    On récupère d'abord les plus récents,
+    puis on réinverse l'ordre afin de
+    retrouver une chronologie naturelle.
+
+    Exemple :
+
+    limit = 6
+
+    => 30 dernières minutes
+    =====================================================
+    """
+
+    measurements = (
+        db.query(
+            Measurement5m,
+        )
+        .filter(
+            Measurement5m.hive_level_id
+            == hive_level_id,
+        )
+        .filter(
+            Measurement5m.type == "weight",
+        )
+        .order_by(
+            Measurement5m.bucket_at.desc(),
+        )
+        .limit(
+            limit,
+        )
+        .all()
+    )
+
+    return list(
+        reversed(
+            measurements,
+        )
+    )
+
+
+def get_between_dates(
+    db: Session,
+    hive_level_id: int,
+    start_at: datetime,
+    end_at: datetime,
+) -> list[Measurement5m]:
+    """
+    =====================================================
+    Retourne les buckets compris dans
+    une période donnée.
+    =====================================================
+    """
+
+    return (
+        db.query(
+            Measurement5m,
+        )
+        .filter(
+            Measurement5m.hive_level_id
+            == hive_level_id,
+        )
+        .filter(
+            Measurement5m.type == "weight",
+        )
+        .filter(
+            Measurement5m.bucket_at
+            >= start_at,
+        )
+        .filter(
+            Measurement5m.bucket_at
+            <= end_at,
+        )
+        .order_by(
+            Measurement5m.bucket_at.asc(),
+        )
+        .all()
+    )

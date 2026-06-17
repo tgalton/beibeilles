@@ -62,10 +62,9 @@ class MeasurementCorrected(Base):
         ForeignKey(
             "weight_calibrations.id",
         ),
-        nullable=False,
+        nullable=True,
         index=True,
     )
-
     # =====================================================
     # Poids brut moyen du bucket.
     # =====================================================
