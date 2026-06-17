@@ -53,7 +53,7 @@ def propose_from_reference_event(
         offset_kg=0.0,
         gain=gain,
         confidence=DEFAULT_CONFIDENCE,
-        source="REFERENCE_WEIGHT",
+        source=CalibrationSource.REFERENCE_WEIGHT,
         algorithm_version=ALGORITHM_VERSION,
     )
 

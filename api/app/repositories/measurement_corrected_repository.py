@@ -58,11 +58,9 @@ def get_by_measurement_5m_id(
     """
 
     return (
-        db.query(
-            MeasurementCorrected,
-        )
+        db.query(MeasurementCorrected)
         .filter(
-            MeasurementCorrected.measurement_5m_id == measurement_5m_id,
+            MeasurementCorrected.measurement_5m_id == measurement_5m_id
         )
         .first()
     )
@@ -86,11 +84,15 @@ def delete_from_date(
         db.query(
             MeasurementCorrected,
         )
-        .filter(
-            MeasurementCorrected.hive_level_id == hive_level_id,
+        .join(
+            Measurement5m,
+            Measurement5m.id == MeasurementCorrected.measurement_5m_id,
         )
         .filter(
-            MeasurementCorrected.measured_at >= measured_at,
+            Measurement5m.hive_level_id == hive_level_id,
+        )
+        .filter(
+            Measurement5m.bucket_at >= measured_at,
         )
         .delete()
     )
@@ -112,14 +114,18 @@ def get_after_date(
         db.query(
             MeasurementCorrected,
         )
-        .filter(
-            MeasurementCorrected.hive_level_id == hive_level_id,
+        .join(
+            Measurement5m,
+            Measurement5m.id == MeasurementCorrected.measurement_5m_id,
         )
         .filter(
-            MeasurementCorrected.measured_at >= measured_at,
+            Measurement5m.hive_level_id == hive_level_id,
+        )
+        .filter(
+            Measurement5m.bucket_at >= measured_at,
         )
         .order_by(
-            MeasurementCorrected.measured_at.asc(),
+            Measurement5m.bucket_at.asc(),
         )
         .all()
     )

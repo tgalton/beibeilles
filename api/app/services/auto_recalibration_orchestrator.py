@@ -55,12 +55,7 @@ def run(
 
     weights = [measurement.avg_value for measurement in measurements]
 
-    timestamps = [
-        index * 5
-        for index in range(
-            len(measurements),
-        )
-    ]
+    timestamps = [float(index * 5) for index in range(len(measurements))]
 
     candidate = weight_baseline_service.detect_baseline_candidate(
         hive_level_id=hive_level_id,

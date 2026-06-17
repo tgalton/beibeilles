@@ -99,7 +99,7 @@ def downgrade() -> None:
     op.drop_index(
         op.f("ix_measurements_raw_hive_level_id"), table_name="measurements_raw"
     )
-    op.drop_constraint(None, "measurements_5m", type_="foreignkey")
+    op.drop_constraint("nom_temporaire", "measurements_5m", type_="foreignkey")
     op.drop_index(op.f("ix_measurements_5m_type"), table_name="measurements_5m")
     op.drop_index(
         op.f("ix_measurements_5m_sensor_device_id"), table_name="measurements_5m"

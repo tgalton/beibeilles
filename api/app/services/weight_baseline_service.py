@@ -191,7 +191,7 @@ def detect_baseline_candidate(
         hive_level_id=hive_level_id,
         baseline_offset_kg=baseline_weight,
         confidence=analysis.confidence,
-        stable_duration_minutes=(max(timestamps_minutes) - min(timestamps_minutes)),
+        stable_duration_minutes=int((max(timestamps_minutes) - min(timestamps_minutes))),
         algorithm_version=ALGORITHM_VERSION,
     )
 
@@ -211,6 +211,6 @@ def build_baseline(
         computed_at=datetime.now(UTC),
         baseline_offset_kg=(candidate.baseline_offset_kg),
         confidence=(candidate.confidence),
-        stable_duration_minutes=(candidate.stable_duration_minutes),
+        stable_duration_minutes=int((candidate.stable_duration_minutes)),
         algorithm_version=(candidate.algorithm_version),
     )

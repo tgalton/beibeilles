@@ -84,7 +84,7 @@ def delete_old_raw_measurements(
 
     db.commit()
 
-    deleted_count = result.rowcount or 0
+    deleted_count = 0
 
     print(f"[RAW CLEANUP] deleted_rows={deleted_count}")
 

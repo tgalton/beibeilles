@@ -18,6 +18,9 @@ from app.models.weight_calibration import (
 from app.services import (
     weight_calibration_service,
 )
+from app.repositories import (
+    weight_calibration_repository,
+)
 
 # =========================================================
 # PARAMETRES METIER
@@ -137,7 +140,7 @@ def create_auto_calibration(
     if current_calibration is not None:
         current_calibration.valid_to = now
 
-        weight_calibration_service.update(
+        weight_calibration_repository.update(
             db=db,
             calibration=current_calibration,
         )
@@ -152,7 +155,7 @@ def create_auto_calibration(
         algorithm_version="auto_recalibration_v1",
     )
 
-    return weight_calibration_service.create(
+    return weight_calibration_repository.create(
         db=db,
         calibration=calibration,
     )

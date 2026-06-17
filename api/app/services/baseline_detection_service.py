@@ -62,7 +62,7 @@ def detect_latest_baseline(
 
     weights = [measurement.corrected_weight_kg for measurement in measurements]
 
-    timestamps_minutes = [index * 5 for index in range(len(measurements))]
+    timestamps_minutes = [float(index * 5) for index in range(len(measurements))]
 
     candidate = weight_baseline_service.detect_baseline_candidate(
         hive_level_id=hive_level_id,

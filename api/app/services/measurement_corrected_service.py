@@ -61,6 +61,11 @@ def create_or_replace_from_measurement_5m(
     =====================================================
     """
 
+    if measurement.hive_level_id is None:
+        raise ValueError(
+            "Measurement must have hive_level_id",
+        )
+
     corrected_weight = weight_calibration_service.apply_calibration(
         db=db,
         hive_level_id=measurement.hive_level_id,
@@ -68,10 +73,15 @@ def create_or_replace_from_measurement_5m(
         measured_at=measurement.bucket_at,
     )
 
-    calibration = weight_calibration_service.get_calibration_for_datetime(
-        db=db,
-        hive_level_id=measurement.hive_level_id,
-        measured_at=measurement.bucket_at,
+
+
+    calibration = (
+        weight_calibration_service
+        .get_calibration_for_datetime(
+            db=db,
+            hive_level_id=measurement.hive_level_id,
+            measured_at=measurement.bucket_at,
+        )
     )
 
     if calibration is None:
@@ -126,6 +136,11 @@ def build_from_measurement_5m(
     - migration d'algorithme
     =====================================================
     """
+
+    if measurement.hive_level_id is None:
+        raise ValueError(
+            "Measurement must have hive_level_id",
+        )
 
     calibration = weight_calibration_service.get_calibration_for_datetime(
         db=db,
