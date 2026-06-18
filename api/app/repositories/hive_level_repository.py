@@ -19,7 +19,19 @@ def create(
 def get_all(
     db: Session,
 ) -> list[HiveLevel]:
-    return db.query(HiveLevel).all()
+    """
+    =====================================================
+    Retourne tous les niveaux de ruche.
+    =====================================================
+    """
+
+    return (
+        db.query(
+            HiveLevel,
+        )
+        .all()
+    )
+
 
 
 def get_by_id(
