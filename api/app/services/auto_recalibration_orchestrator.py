@@ -50,12 +50,22 @@ def run(
         limit=WINDOW_SIZE,
     )
 
+    print(
+        f"[AUTO RECALIBRATION] "
+        f"{len(measurements)} measurements found"
+    )
+
     if len(measurements) < WINDOW_SIZE:
         return
 
     weights = [measurement.avg_value for measurement in measurements]
 
     timestamps = [float(index * 5) for index in range(len(measurements))]
+
+    print(
+        f"[AUTO RECALIBRATION] "
+        f"weights={weights}"
+    )
 
     candidate = weight_baseline_service.detect_baseline_candidate(
         hive_level_id=hive_level_id,
@@ -64,13 +74,13 @@ def run(
     )
 
     if candidate is None:
-        return
 
-    print(
-        f"[AUTO RECALIBRATION] "
-        f"baseline detected "
-        f"hive_level={hive_level_id}"
-    )
+        print(
+            "[AUTO RECALIBRATION] "
+            "no baseline detected"
+        )
+
+        return
 
     current_baseline = weight_baseline_service.save_baseline(
         db=db,
