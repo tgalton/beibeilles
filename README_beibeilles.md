@@ -109,6 +109,12 @@ Adresse pour le json de l'api : http://79.137.34.118:8000/openapi.json
 docker logs watchtower -f
 ```
 
+**Voir logs auto-recalibration sur server**
+
+```bash
+docker logs -f auto-recalibration
+```
+
 <!-- Tout lancer en docker local--> docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 <!-- Tout down en docker local--> docker compose -f docker-compose.yml -f docker-compose.dev.yml down -v
 <!-- Tout rebuild sans cache en docker local-->docker compose -f docker-compose.yml -f docker-compose.dev.yml build --no-cache

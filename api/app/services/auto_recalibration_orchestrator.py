@@ -66,6 +66,12 @@ def run(
     if candidate is None:
         return
 
+    print(
+        f"[AUTO RECALIBRATION] "
+        f"baseline detected "
+        f"hive_level={hive_level_id}"
+    )
+
     current_baseline = weight_baseline_service.save_baseline(
         db=db,
         candidate=candidate,
@@ -88,10 +94,23 @@ def run(
     if proposal is None:
         return
 
+    print(
+        f"[AUTO RECALIBRATION] "
+        f"drift detected "
+        f"hive_level={hive_level_id} "
+        f"offset={proposal.offset_kg}"
+    )
+
     auto_recalibration_service.create_auto_calibration(
         db=db,
         hive_level_id=hive_level_id,
         proposal=proposal,
+    )
+
+    print(
+        f"[AUTO RECALIBRATION] "
+        f"calibration created "
+        f"hive_level={hive_level_id}"
     )
 
     # =====================================================
@@ -106,3 +125,8 @@ def run(
         db=db,
         hive_level_id=hive_level_id,
     )
+
+    print(
+    f"[AUTO RECALIBRATION] baseline detected "
+    f"hive_level={hive_level_id}"
+)
