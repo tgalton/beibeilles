@@ -112,7 +112,7 @@ docker logs watchtower -f
 **Voir logs auto-recalibration sur server**
 
 ```bash
-docker logs -f auto-recalibration
+docker logs -f beibeilles-auto-recalibration-1
 ```
 
 <!-- Tout lancer en docker local--> docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
