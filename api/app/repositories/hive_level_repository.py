@@ -25,13 +25,9 @@ def get_all(
     =====================================================
     """
 
-    return (
-        db.query(
-            HiveLevel,
-        )
-        .all()
-    )
-
+    return db.query(
+        HiveLevel,
+    ).all()
 
 
 def get_by_id(

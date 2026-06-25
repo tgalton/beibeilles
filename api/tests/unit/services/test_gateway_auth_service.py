@@ -2,6 +2,7 @@ from time import time
 
 from app.services import gateway_auth_service
 
+
 # Test build_signature_message
 def test_build_signature_message():
 
@@ -9,35 +10,27 @@ def test_build_signature_message():
 
     body = b'{"hello":"world"}'
 
-    message = (
-        gateway_auth_service.build_signature_message(
-            timestamp=timestamp,
-            body=body,
-        )
+    message = gateway_auth_service.build_signature_message(
+        timestamp=timestamp,
+        body=body,
     )
 
-    assert (
-        message
-        == b'123456{"hello":"world"}'
-    )
+    assert message == b'123456{"hello":"world"}'
+
 
 # Test compute_hmac_signature
 def test_compute_hmac_signature():
 
-    signature_1 = (
-        gateway_auth_service.compute_hmac_signature(
-            secret="my-secret",
-            timestamp="123456",
-            body=b"hello",
-        )
+    signature_1 = gateway_auth_service.compute_hmac_signature(
+        secret="my-secret",
+        timestamp="123456",
+        body=b"hello",
     )
 
-    signature_2 = (
-        gateway_auth_service.compute_hmac_signature(
-            secret="my-secret",
-            timestamp="123456",
-            body=b"hello",
-        )
+    signature_2 = gateway_auth_service.compute_hmac_signature(
+        secret="my-secret",
+        timestamp="123456",
+        body=b"hello",
     )
 
     assert signature_1 == signature_2
@@ -46,30 +39,25 @@ def test_compute_hmac_signature():
 # Test changement du body
 def test_compute_hmac_signature_changes_if_body_changes():
 
-    signature_1 = (
-        gateway_auth_service.compute_hmac_signature(
-            secret="my-secret",
-            timestamp="123456",
-            body=b"hello",
-        )
+    signature_1 = gateway_auth_service.compute_hmac_signature(
+        secret="my-secret",
+        timestamp="123456",
+        body=b"hello",
     )
 
-    signature_2 = (
-        gateway_auth_service.compute_hmac_signature(
-            secret="my-secret",
-            timestamp="123456",
-            body=b"world",
-        )
+    signature_2 = gateway_auth_service.compute_hmac_signature(
+        secret="my-secret",
+        timestamp="123456",
+        body=b"world",
     )
 
     assert signature_1 != signature_2
 
+
 # Timestamp valide
 def test_validate_timestamp_valid():
 
-    timestamp = str(
-        int(time())
-    )
+    timestamp = str(int(time()))
 
     assert (
         gateway_auth_service.validate_timestamp(
@@ -78,12 +66,11 @@ def test_validate_timestamp_valid():
         is True
     )
 
+
 # Timestamp trop vieux
 def test_validate_timestamp_too_old():
 
-    timestamp = str(
-        int(time()) - 1000
-    )
+    timestamp = str(int(time()) - 1000)
 
     assert (
         gateway_auth_service.validate_timestamp(
@@ -91,6 +78,7 @@ def test_validate_timestamp_too_old():
         )
         is False
     )
+
 
 # Timestamp invalide
 def test_validate_timestamp_invalid():
@@ -102,6 +90,7 @@ def test_validate_timestamp_invalid():
         is False
     )
 
+
 # Signature valide
 def test_verify_signature_valid():
 
@@ -111,12 +100,10 @@ def test_verify_signature_valid():
 
     body = b'{"value":42}'
 
-    signature = (
-        gateway_auth_service.compute_hmac_signature(
-            secret=secret,
-            timestamp=timestamp,
-            body=body,
-        )
+    signature = gateway_auth_service.compute_hmac_signature(
+        secret=secret,
+        timestamp=timestamp,
+        body=body,
     )
 
     assert (
@@ -128,6 +115,7 @@ def test_verify_signature_valid():
         )
         is True
     )
+
 
 # Signature invalide
 def test_verify_signature_invalid():

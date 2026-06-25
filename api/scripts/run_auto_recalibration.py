@@ -19,24 +19,14 @@ def main() -> None:
     db = SessionLocal()
 
     try:
-
-        hive_levels = (
-            hive_level_repository.get_all(
-                db=db,
-            )
+        hive_levels = hive_level_repository.get_all(
+            db=db,
         )
 
-        print(
-            f"[AUTO RECALIBRATION] "
-            f"{len(hive_levels)} hive levels found"
-        )
+        print(f"[AUTO RECALIBRATION] {len(hive_levels)} hive levels found")
 
         for hive_level in hive_levels:
-
-            print(
-                f"[AUTO RECALIBRATION] "
-                f"processing hive_level={hive_level.id}"
-            )
+            print(f"[AUTO RECALIBRATION] processing hive_level={hive_level.id}")
 
             auto_recalibration_orchestrator.run(
                 db=db,
@@ -44,7 +34,6 @@ def main() -> None:
             )
 
     finally:
-
         db.close()
 
 

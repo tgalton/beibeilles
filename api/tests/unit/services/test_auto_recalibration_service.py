@@ -78,12 +78,8 @@ def test_propose_from_baseline_drift_negative():
     assert proposal.offset_kg == -1.3
 
 
-@patch(
-    "app.services.auto_recalibration_service.weight_calibration_repository"
-)
-@patch(
-    "app.services.auto_recalibration_service.weight_calibration_service"
-)
+@patch("app.services.auto_recalibration_service.weight_calibration_repository")
+@patch("app.services.auto_recalibration_service.weight_calibration_service")
 def test_create_auto_calibration(
     mock_service,
     mock_repository,
@@ -119,4 +115,3 @@ def test_create_auto_calibration(
     )
 
     assert result == calibration
-

@@ -7,6 +7,7 @@ def test_gateway_create_and_list(client):
     assert "gateway_uid" in data
     assert "hmac_secret" in data
 
+
 def test_gateway_uid_is_unique(client):
     r1 = client.post("/gateways", json={"name": "gw1"})
     r2 = client.post("/gateways", json={"name": "gw2"})

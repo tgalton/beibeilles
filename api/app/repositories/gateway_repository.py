@@ -30,11 +30,7 @@ def get_gateway_by_id(
     Recherche une gateway par son identifiant.
     """
 
-    return (
-        db.query(Gateway)
-        .filter(Gateway.id == gateway_id)
-        .first()
-    )
+    return db.query(Gateway).filter(Gateway.id == gateway_id).first()
 
 
 def get_gateway_by_uid(

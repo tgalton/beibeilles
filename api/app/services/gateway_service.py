@@ -58,11 +58,9 @@ def get_gateway_by_id(
     Retourne une gateway.
     """
 
-    gateway = (
-        gateway_repository.get_gateway_by_id(
-            db=db,
-            gateway_id=gateway_id,
-        )
+    gateway = gateway_repository.get_gateway_by_id(
+        db=db,
+        gateway_id=gateway_id,
     )
 
     if gateway is None:
@@ -82,11 +80,9 @@ def get_gateway_by_uid(
     Recherche une gateway par UID.
     """
 
-    gateway = (
-        gateway_repository.get_gateway_by_uid(
-            db=db,
-            gateway_uid=gateway_uid,
-        )
+    gateway = gateway_repository.get_gateway_by_uid(
+        db=db,
+        gateway_uid=gateway_uid,
     )
 
     if gateway is None:

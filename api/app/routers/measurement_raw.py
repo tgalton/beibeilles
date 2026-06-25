@@ -38,7 +38,6 @@ router = APIRouter(
 )
 def ingest_measurements(
     payload: IoTIngest,
-
     gateway: Gateway = Depends(
         authenticate_gateway,
     ),

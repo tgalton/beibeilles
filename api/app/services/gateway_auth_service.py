@@ -70,12 +70,7 @@ def validate_timestamp(
 
     current_ts = int(time())
 
-    return (
-        abs(
-            current_ts - request_ts
-        )
-        <= MAX_DRIFT_SECONDS
-    )
+    return abs(current_ts - request_ts) <= MAX_DRIFT_SECONDS
 
 
 def verify_signature(
@@ -91,12 +86,10 @@ def verify_signature(
     =========================================================
     """
 
-    expected_signature = (
-        compute_hmac_signature(
-            secret=secret,
-            timestamp=timestamp,
-            body=body,
-        )
+    expected_signature = compute_hmac_signature(
+        secret=secret,
+        timestamp=timestamp,
+        body=body,
     )
 
     return hmac.compare_digest(

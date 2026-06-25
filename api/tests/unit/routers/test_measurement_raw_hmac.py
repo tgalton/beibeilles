@@ -95,7 +95,6 @@
 #     assert isinstance(response.json(), list)
 
 
-
 # def test_ingest_measurements_hmac_invalid_signature(db_session):
 
 #     gateway = Gateway(

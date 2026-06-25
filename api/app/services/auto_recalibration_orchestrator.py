@@ -50,10 +50,7 @@ def run(
         limit=WINDOW_SIZE,
     )
 
-    print(
-        f"[AUTO RECALIBRATION] "
-        f"{len(measurements)} measurements found"
-    )
+    print(f"[AUTO RECALIBRATION] {len(measurements)} measurements found")
 
     if len(measurements) < WINDOW_SIZE:
         return
@@ -62,10 +59,7 @@ def run(
 
     timestamps = [float(index * 5) for index in range(len(measurements))]
 
-    print(
-        f"[AUTO RECALIBRATION] "
-        f"weights={weights}"
-    )
+    print(f"[AUTO RECALIBRATION] weights={weights}")
 
     candidate = weight_baseline_service.detect_baseline_candidate(
         hive_level_id=hive_level_id,
@@ -74,11 +68,7 @@ def run(
     )
 
     if candidate is None:
-
-        print(
-            "[AUTO RECALIBRATION] "
-            "no baseline detected"
-        )
+        print("[AUTO RECALIBRATION] no baseline detected")
 
         return
 
@@ -117,11 +107,7 @@ def run(
         proposal=proposal,
     )
 
-    print(
-        f"[AUTO RECALIBRATION] "
-        f"calibration created "
-        f"hive_level={hive_level_id}"
-    )
+    print(f"[AUTO RECALIBRATION] calibration created hive_level={hive_level_id}")
 
     # =====================================================
     # Une nouvelle calibration modifie potentiellement
@@ -136,7 +122,4 @@ def run(
         hive_level_id=hive_level_id,
     )
 
-    print(
-    f"[AUTO RECALIBRATION] baseline detected "
-    f"hive_level={hive_level_id}"
-)
+    print(f"[AUTO RECALIBRATION] baseline detected hive_level={hive_level_id}")

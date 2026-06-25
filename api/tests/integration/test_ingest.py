@@ -1,6 +1,5 @@
-from sqlalchemy import select
-
 from app.models.measurement_raw import MeasurementRaw
+from sqlalchemy import select
 
 
 def test_raw_ingest_ok(client, integration_context):
@@ -40,7 +39,6 @@ def test_raw_ingest_creates_measurement(client, integration_context):
     assert response.status_code == 200
 
 
-
 def test_raw_ingest_multiple_measurements(
     client,
     integration_context,
@@ -72,13 +70,6 @@ def test_raw_ingest_multiple_measurements(
     assert response.status_code == 200
 
 
-from sqlalchemy import select
-
-from app.models.measurement_raw import (
-    MeasurementRaw,
-)
-
-
 def test_raw_ingest_persists_measurement(
     client,
     db,
@@ -108,9 +99,7 @@ def test_raw_ingest_persists_measurement(
     # Recharge les données depuis PostgreSQL
     db.expire_all()
 
-    measurement = db.execute(
-        select(MeasurementRaw)
-    ).scalar_one_or_none()
+    measurement = db.execute(select(MeasurementRaw)).scalar_one_or_none()
 
     assert measurement is not None
 

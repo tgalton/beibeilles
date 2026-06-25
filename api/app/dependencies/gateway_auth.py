@@ -20,15 +20,12 @@ from app.services import gateway_auth_service
 async def authenticate_gateway(
     request: Request,
     db: Session = Depends(get_db),
-
     x_gateway_uid: str = Header(
         alias="X-Gateway-Uid",
     ),
-
     x_timestamp: str = Header(
         alias="X-Timestamp",
     ),
-
     x_signature: str = Header(
         alias="X-Signature",
     ),
@@ -39,15 +36,12 @@ async def authenticate_gateway(
     =========================================================
     """
 
-    gateway = (
-        gateway_service.get_gateway_by_uid(
-            db=db,
-            gateway_uid=x_gateway_uid,
-        )
+    gateway = gateway_service.get_gateway_by_uid(
+        db=db,
+        gateway_uid=x_gateway_uid,
     )
 
     if not gateway.is_active:
-
         raise HTTPException(
             status_code=403,
             detail="Gateway disabled",

@@ -31,13 +31,11 @@ class Hive(Base):
         nullable=False,
     )
 
-
     gateway_id: Mapped[int | None] = mapped_column(
         ForeignKey("gateways.id"),
         nullable=True,
         index=True,
     )
-
 
     levels = relationship(
         "HiveLevel",

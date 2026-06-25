@@ -66,6 +66,7 @@ def test_ingest_measurements(mock_ingest):
 
     mock_ingest.assert_called_once()
 
+
 # =========================================================
 # POST /measurements/raw/ingest
 #
