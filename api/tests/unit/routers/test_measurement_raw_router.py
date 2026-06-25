@@ -4,7 +4,11 @@ from unittest.mock import patch
 
 from fastapi.testclient import TestClient
 
+
 from app.main import app
+
+from app.dependencies.gateway_auth import authenticate_gateway
+from tests.unit.routers.conftest_auth import override_auth_gateway
 
 
 # =========================================================
@@ -20,6 +24,11 @@ from app.main import app
 # =========================================================
 client = TestClient(app)
 
+# =========================================================
+# Fake gateway (bypass HMAC)
+# =========================================================
+app.dependency_overrides[authenticate_gateway] = override_auth_gateway
+
 
 # =========================================================
 # POST /measurements/ingest
@@ -29,12 +38,12 @@ client = TestClient(app)
 # - payload accepté
 # - appel du service effectué
 # =========================================================
-@patch(
-    "app.services.measurement_raw_service.ingest_measurements",
-)
-def test_ingest_measurements(
-    mock_ingest,
-):
+# =========================================================
+# POST /measurements/ingest
+# =========================================================
+@patch("app.services.measurement_raw_service.ingest_measurements")
+def test_ingest_measurements(mock_ingest):
+
     mock_ingest.return_value = []
 
     payload = {
@@ -45,13 +54,17 @@ def test_ingest_measurements(
     response = client.post(
         "/measurements/ingest",
         json=payload,
+        headers={
+            "X-Gateway-Uid": "test-gw",
+            "X-Timestamp": "123456",
+            "X-Signature": "fake",
+        },
     )
 
     assert response.status_code == 200
     assert response.json() == []
 
     mock_ingest.assert_called_once()
-
 
 # =========================================================
 # POST /measurements/raw/ingest
@@ -77,6 +90,11 @@ def test_ingest_measurements_raw_route(
     response = client.post(
         "/measurements/raw/ingest",
         json=payload,
+        headers={
+            "X-Gateway-Uid": "test-gw",
+            "X-Timestamp": "123456",
+            "X-Signature": "fake",
+        },
     )
 
     assert response.status_code == 200

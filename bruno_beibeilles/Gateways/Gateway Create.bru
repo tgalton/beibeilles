@@ -1,0 +1,33 @@
+meta {
+  name: Gateway Create
+  type: http
+}
+
+post {
+  url: {{host}}/gateways
+  body: json
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "name": "Rucher Rennes Nord"
+  }
+}
+
+script:post-response {
+  const body = res.getBody();
+
+  bru.setEnvVar(
+    "gateway_uid",
+    body.gateway_uid
+  );
+
+  bru.setEnvVar(
+    "gateway_hmac_secret",
+    body.hmac_secret
+  );
+}

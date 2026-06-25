@@ -15,6 +15,12 @@ from app.schemas.measurement import (
 
 from app.services import measurement_raw_service
 
+from app.dependencies.gateway_auth import (
+    authenticate_gateway,
+)
+
+from app.models.gateway import Gateway
+
 
 router = APIRouter(
     prefix="/measurements",
@@ -32,6 +38,10 @@ router = APIRouter(
 )
 def ingest_measurements(
     payload: IoTIngest,
+
+    gateway: Gateway = Depends(
+        authenticate_gateway,
+    ),
     db: Session = Depends(get_db),
 ):
     """

@@ -72,11 +72,12 @@ jobs:
         env:
           DATABASE_URL: postgresql+psycopg://beibeilles:beibeilles@localhost:5432/beibeilles
           TESTING: "1"
+          PYTHONPATH: .
         run: |
           cd api
 
           pytest \
-            --cov=app \
+            -xvs --cov=app --cov-report=term-missing \
             --cov-report=term-missing \
             --cov-fail-under=70
 

@@ -1,6 +1,6 @@
 from datetime import UTC, datetime
 
-from sqlalchemy import DateTime
+from sqlalchemy import DateTime, ForeignKey
 from sqlalchemy import Integer
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped
@@ -31,6 +31,14 @@ class Hive(Base):
         nullable=False,
     )
 
+
+    gateway_id: Mapped[int | None] = mapped_column(
+        ForeignKey("gateways.id"),
+        nullable=True,
+        index=True,
+    )
+
+
     levels = relationship(
         "HiveLevel",
         back_populates="hive",
@@ -41,4 +49,9 @@ class Hive(Base):
         "SensorDevice",
         back_populates="hive",
         cascade="all, delete-orphan",
+    )
+
+    gateway = relationship(
+        "Gateway",
+        back_populates="hives",
     )

@@ -1,48 +1,33 @@
-from dotenv import load_dotenv
-from logging.config import fileConfig
-from sqlalchemy import engine_from_config, pool
-from alembic import context
-import os
-from app.database import Base
 from app.models import *  # important pour autogenerate  # noqa: F403
 
-load_dotenv()
+import os
+from logging.config import fileConfig
+
+from sqlalchemy import engine_from_config, pool
+from alembic import context
+
+from app.database import Base  
+
 config = context.config
 
-if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
+fileConfig(config.config_file_name)
 
-# =========================================================
-# METADATA SQLAlchemy
-# =========================================================
 target_metadata = Base.metadata
 
-# =========================================================
-# DATABASE URL (Docker override)
-# =========================================================
-DATABASE_URL = os.getenv("DATABASE_URL")
 
-if DATABASE_URL:
-    config.set_main_option("sqlalchemy.url", DATABASE_URL)
-
-
-def run_migrations_offline():
-    url = config.get_main_option("sqlalchemy.url")
-
-    context.configure(
-        url=url,
-        target_metadata=target_metadata,
-        literal_binds=True,
-        dialect_opts={"paramstyle": "named"},
+def get_url():
+    return os.getenv(
+        "DATABASE_URL",
+        "postgresql+psycopg://beibeilles:beibeilles@localhost:5432/beibeilles",
     )
-
-    with context.begin_transaction():
-        context.run_migrations()
 
 
 def run_migrations_online():
+    configuration = config.get_section(config.config_ini_section)
+    configuration["sqlalchemy.url"] = get_url()
+
     connectable = engine_from_config(
-        config.get_section(config.config_ini_section),
+        configuration,
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )
@@ -51,7 +36,6 @@ def run_migrations_online():
         context.configure(
             connection=connection,
             target_metadata=target_metadata,
-            compare_type=True,
         )
 
         with context.begin_transaction():
@@ -59,8 +43,6 @@ def run_migrations_online():
 
 
 if context.is_offline_mode():
-    run_migrations_offline()
+    raise RuntimeError("Offline mode not supported")
 else:
     run_migrations_online()
-
-print(Base.metadata.tables.keys())

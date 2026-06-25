@@ -42,6 +42,12 @@ docker compose \
 build --no-cache
 ```
 
+**Si pas les droits docker**
+
+```bash
+sudo usermod -aG docker $USER
+```
+
 **Alembic migration**
 
 ```bash
@@ -346,6 +352,16 @@ ESP32 → RS485 → Raspberry Pi
 - ESP32
 - HX711
 - 4 demi-cellules de charge type balance
+
+branchement :
+ESP32 HX711
+
+---
+
+3.3V -------------> VCC
+GND -------------> GND
+GPIO4 -------------> DT / DOUT
+GPIO5 -------------> SCK / CLK
 
 ---
 

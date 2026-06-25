@@ -7,6 +7,7 @@ from app.models.weight_baseline import WeightBaseline
 from app.models.weight_calibration import WeightCalibration
 from app.models.weight_reference_event import WeightReferenceEvent
 from app.models.measurement_corrected import MeasurementCorrected
+from app.models.gateway import Gateway
 
 __all__ = [
     "Hive",
@@ -18,4 +19,5 @@ __all__ = [
     "WeightCalibration",
     "WeightReferenceEvent",
     "MeasurementCorrected",
+    "Gateway",
 ]
